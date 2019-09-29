@@ -1,0 +1,38 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #09d3ac;
+}
+
+.mainNavBrand-logo {
+  background-size: cover;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  width: auto;
+  height: 50px;
+  color: #e62434;
+  font-size: 26px;
+  font-weight: 900;
+  font-family: 'Verdana';
+  transform: scale(.7,1);
+  /* background-image: url(/assets/img/grubhub/logo-full.svg); */
+  transition: none;
+}
