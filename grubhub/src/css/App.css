@@ -36,3 +36,15 @@
   /* background-image: url(/assets/img/grubhub/logo-full.svg); */
   transition: none;
 }
+
+.form-control {
+  justify-content: center;
+}
+
+.form-text {
+  font-size: 23.3px;
+  font-weight: 700;
+  /* margin-block: 30px; */
+  margin-bottom: 24px;
+  margin-top: 40px;
+}
