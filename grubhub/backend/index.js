@@ -1,18 +1,18 @@
-
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 var session = require('express-session');
-var cookieParser = require('cookie-parser');
+
 var cors = require('cors');
-app.set('view engine', 'ejs');
+var pool = require('./database')
+// app.set('view engine', 'ejs');
 
 //use cors to allow cross origin resource sharing
 app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 
 //use express session to maintain session data
 app.use(session({
-    secret              : 'cmpe273_kafka_passport_mongo',
+    secret              : 'wzex78675jnkm321pkjohi564',
     resave              : false, // Forces the session to be saved back to the session store, even if the session was never modified during the request
     saveUninitialized   : false, // Force to save uninitialized session to db. A session is uninitialized when it is new but not modified.
     duration            : 60 * 60 * 1000,    // Overall duration of Session : 30 minutes : 1800 seconds
@@ -32,134 +32,122 @@ app.use(function(req, res, next) {
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers');
     res.setHeader('Cache-Control', 'no-cache');
     next();
-  });
+});
 
-  var Users = [{
-      username : "admin",
-      password : "admin"
-  }]
+app.post('/login', function(req, res) {
+    let email = req.body.email;
+    let password = req.body.password;
+    let query = "SELECT * FROM grubhub.Buyers where email='" + email + "' AND password='"+ password +"'";
+    console.log(query);
+    pool.query(query, function(err, results){
+        
+        console.log("Error : " + JSON.stringify(err));
+        console.log("Result : " + JSON.stringify(results));
 
-  var books = [
-    {"BookID" : "1", "Title" : "Book 1", "Author" : "Author 1"},
-    {"BookID" : "2", "Title" : "Book 2", "Author" : "Author 2"},
-    {"BookID" : "3", "Title" : "Book 3", "Author" : "Author 3"}
-]
-
-var findBookObject = (bookId) => {
-    for (let i = 0; i < books.length; i++){
-        let book = books[i];
-        let id = book["BookID"];
-        if (bookId == id){
-            return i;
+        if (err){
+            console.error("Error : " + JSON.stringify(err));
+            res.json({
+                "status" : 500
+            });
         }
-    }
-    return -1;
-}
-
-//Route to handle Post Request Call
-app.post('/login',function(req,res){
-    
-    // Object.keys(req.body).forEach(function(key){
-    //     req.body = JSON.parse(key);
-    // });
-    // var username = req.body.username;
-    // var password = req.body.password;
-    console.log("Inside Login Post Request");
-    //console.log("Req Body : ", username + "password : ",password);
-    console.log("Req Body : ",req.body);
-    Users.filter(function(user){
-        if(user.username === req.body.username && user.password === req.body.password){
-            res.cookie('cookie',"admin",{maxAge: 900000, httpOnly: false, path : '/'});
-            req.session.user = user;
-            res.writeHead(200,{
-                'Content-Type' : 'text/plain'
-            })
-            let responseJson = {
-                "status" : 200,
-                "error" : ""
-            }
-            res.end(JSON.stringify(responseJson));
+        if (results && results.length != 0){
+            res.json({
+                "status" : 200
+            });
         } else {
-            let responseJson = {
-                "status" : 403,
-                "error" : "Invalid Credentials"
-            }
-            res.end(JSON.stringify(responseJson));
+            res.json({
+                "status" : 403
+            });
         }
-    })
-
-    
+    });      
 });
 
-app.post('/create',function(req,res){
-    console.log("Inside Create Post Request");
+app.post('/signup', function(req, res) {
+    let {buyerName, email, password, contact} = req.body;
+    
 
-    console.log("Req Body : ",req.body);
-    let reqBody = req.body;
-    let bookId = reqBody.bookId;
-    let newBook = {
-        "BookID" : bookId,
-        "Title" : reqBody.bookName,
-        "Author" : reqBody.bookAuthor
-    };
-    let existingBookId = findBookObject(reqBody.bookId);
-    if (existingBookId == -1){
-        books.push(newBook);
-        res.writeHead(200,{
-            'Content-Type' : 'application/json'
-        });
-        console.log("Books : ",JSON.stringify(books));
-        res.end(JSON.stringify({
-            "status" : 200,
-            "error" : ""
-        }));
+    let query = "INSERT INTO `grubhub`.`Buyers` (`buyer_name`, `email`, `password`, `phone_number`) VALUES ('" + buyerName + "', '" + email + "', '" + password + "', '" + contact + "')"
+    console.log(query);
+    pool.query(query, function(err, results){
         
-    } else {
-        res.writeHead(200,{
-            'Content-Type' : 'application/json'
-        });
-        res.end(JSON.stringify({
-            "status" : 444,
-            "error" : "Book already exists"
-        }));
-    }
+        console.log("Error : " + JSON.stringify(err));
+        console.log("Result : " + JSON.stringify(results));
+
+        if (err){
+            console.error("Error : " + JSON.stringify(err));
+            res.json({
+                "status" : 500
+            });
+        }
+        if (results && results.length != 0){
+            res.json({
+                "status" : 200
+            });
+        } else {
+            res.json({
+                "status" : 403
+            });
+        }
+    });      
 });
 
-app.post('/delete',function(req,res){
-    console.log("Inside Delete Request");
+app.post('/ownersignup', function(req, res) {
+    let {ownerName, email, password, contact} = req.body;
+    console.log("Req Body : " + JSON.stringify(req.body))
 
-    console.log("Req Body : ",req.body);
-    let bookId = req.body.bookId;
-    console.log("BookID to be deleted : " + bookId);
-
-    let idxToDelete = findBookObject(bookId);
-    if (idxToDelete > -1){
-        books.splice(idxToDelete, 1);
+    let query = "INSERT INTO `grubhub`.`Owners` (`owner_name`, `email`, `password`, `phone_number`) VALUES ('" + ownerName + "', '" + email + "', '" + password + "', '" + contact + "')"
+    console.log(query);
+    pool.query(query, function(err, results){
         
-    }
+        console.log("Error : " + JSON.stringify(err));
+        console.log("Result : " + JSON.stringify(results));
 
-    
-    res.writeHead(200,{
-        'Content-Type' : 'application/json'
-    });
-    console.log("Books : ",JSON.stringify(books));
-    res.end(JSON.stringify(books));
-    
+        if (err){
+            console.error("Error : " + JSON.stringify(err));
+            res.json({
+                "status" : 500
+            });
+        }
+        if (results && results.length != 0){
+            res.json({
+                "status" : 200
+            });
+        } else {
+            res.json({
+                "status" : 403
+            });
+        }
+    });      
+});
+
+app.post('/ownerlogin', function(req, res) {
+    let email = req.body.email;
+    let password = req.body.password;
+    let query = "SELECT * FROM grubhub.Owners where email='" + email + "' AND password='"+ password +"'";
+    console.log(query);
+    pool.query(query, function(err, results){
+        
+        console.log("Error : " + JSON.stringify(err));
+        console.log("Result : " + JSON.stringify(results));
+
+        if (err){
+            console.error("Error : " + JSON.stringify(err));
+            res.json({
+                "status" : 500
+            });
+        }
+        if (results && results.length != 0){
+            res.json({
+                "status" : 200
+            });
+        } else {
+            res.json({
+                "status" : 403
+            });
+        }
+    });      
 });
 
 
-
-
-//Route to get All Books when user visits the Home Page
-app.get('/home', function(req,res){
-    console.log("Inside Home Login");    
-    res.writeHead(200,{
-        'Content-Type' : 'application/json'
-    });
-    console.log("Books : ",JSON.stringify(books));
-    res.end(JSON.stringify(books));
-    
-})
-//start your server on port 3001
 app.listen(3001);
-console.log("Server Listening on port 3001");
+console.log('Server Listening on port 3001');

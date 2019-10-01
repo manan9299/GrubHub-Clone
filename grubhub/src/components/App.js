@@ -27,6 +27,7 @@ class App extends Component {
           <Route path="/buyersignup" component={BuyerSignUp}/>
           <Route path="/ownerlogin" component={OwnerLogin}/>
           <Route path="/ownersignup" component={OwnerSignUp}/>
+          {/* <Route path="/buyerhome" component={OwnerSignUp}/> */}
         </div>
       </BrowserRouter>
     );
