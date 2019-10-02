@@ -19,7 +19,7 @@ class OwnerLogin extends Component {
 			authMessage : "",
 			isEmailValid : false,
 			isPasswordValid : false,
-			redirectToHome : ""
+			redirectToHome : null
 		}
 		this.emailChangeHandler = this.emailChangeHandler.bind(this);
 		this.passwordChangeHandler = this.passwordChangeHandler.bind(this);
@@ -96,8 +96,8 @@ class OwnerLogin extends Component {
 
 	render() {
 		let redirectVar = null;
-		if(!cookie.load('grubhubcookie')){
-			redirectVar = <Redirect to= "/ownerlogin"/>
+		if(cookie.load('grubhubcookie')){
+			redirectVar = <Redirect to= "/ownerhome"/>
 		}
 		let {isEmailValid, isPasswordValid} = this.state;
 		let emailErrorMessage = isEmailValid ? "" : "Email is Invalid";

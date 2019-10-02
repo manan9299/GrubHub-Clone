@@ -95,8 +95,8 @@ class BuyerLogin extends Component {
 
 	render() {
 		let redirectVar = null;
-		if(!cookie.load('grubhubcookie')){
-			redirectVar = <Redirect to= "/buyerlogin"/>
+		if(cookie.load('grubhubcookie')){
+			redirectVar = <Redirect to= "/buyerhome"/>
 		}
 		let {isEmailValid, isPasswordValid} = this.state;
 		let emailErrorMessage = isEmailValid ? "" : "Email is Invalid";

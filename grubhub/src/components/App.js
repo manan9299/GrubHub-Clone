@@ -7,8 +7,9 @@ import BuyerLogin from './BuyerLogin';
 import BuyerSignUp from './BuyerSignUp';
 import OwnerLogin from './OwnerLogin';
 import OwnerSignUp from './OwnerSignUp';
+import OwnerHome from './OwnerHome';
+import BuyerHome from './BuyerHome';
 
-import {Form, Button} from 'react-bootstrap';
 import '../css/App.css';
 
 class App extends Component {
@@ -27,7 +28,8 @@ class App extends Component {
           <Route path="/buyersignup" component={BuyerSignUp}/>
           <Route path="/ownerlogin" component={OwnerLogin}/>
           <Route path="/ownersignup" component={OwnerSignUp}/>
-          {/* <Route path="/buyerhome" component={OwnerSignUp}/> */}
+          <Route path="/ownerhome" component={OwnerHome}/>
+          <Route path="/buyerhome" component={BuyerHome}/>
         </div>
       </BrowserRouter>
     );

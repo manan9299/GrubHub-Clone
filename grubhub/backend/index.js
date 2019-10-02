@@ -5,6 +5,9 @@ var session = require('express-session');
 
 var cors = require('cors');
 var pool = require('./database')
+
+const BUYER = "buyer";
+const OWNER = "owner";
 // app.set('view engine', 'ejs');
 
 //use cors to allow cross origin resource sharing
@@ -19,9 +22,6 @@ app.use(session({
     activeDuration      :  5 * 60 * 1000
 }));
 
-// app.use(bodyParser.urlencoded({
-//     extended: true
-//   }));
 app.use(bodyParser.json());
 
 //Allow Access Control
@@ -51,6 +51,12 @@ app.post('/login', function(req, res) {
             });
         }
         if (results && results.length != 0){
+            res.cookie("grubhubcookie", "user", {
+                maxAge : 900000,
+                httpOnly : false
+            });
+            req.session.userId = results[0]["buyer_id"];
+            req.session.userType = BUYER;
             res.json({
                 "status" : 200
             });
@@ -109,9 +115,6 @@ app.post('/ownersignup', function(req, res) {
             });
         }
         if (results && results.length != 0){
-            res.json({
-                "status" : 200
-            });
         } else {
             res.json({
                 "status" : 403
@@ -137,6 +140,12 @@ app.post('/ownerlogin', function(req, res) {
             });
         }
         if (results && results.length != 0){
+            res.cookie("grubhubcookie", "user", {
+                maxAge : 900000,
+                httpOnly : false
+            });
+            req.session.userId = results[0]["owner_id"];
+            req.session.userType = OWNER;
             res.json({
                 "status" : 200
             });
