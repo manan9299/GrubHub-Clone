@@ -22,8 +22,16 @@ class CommonNavbar extends Component {
 		if (cookie.load("grubhubcookie")){
 			console.log("Active Session detected !!");
 			loginButtons = (
-				<Form className="offset-sm-10" inline>
-					<Button variant="light" onClick={this.handleLogout} href="/" style={btnStyle}>Logout</Button>
+				// className="offset-sm-10"
+				<Form className="offset-sm-9" inline>
+					<NavDropdown title="Manage Account" id="nav-dropdown">
+						<NavDropdown.Item href='/restaurantinfo'>Update Restaurant Info</NavDropdown.Item>
+						<NavDropdown.Item >Update Sections</NavDropdown.Item>
+						<NavDropdown.Item >Update Menu</NavDropdown.Item>
+						<NavDropdown.Divider />
+						<NavDropdown.Item >View Profile</NavDropdown.Item>
+						<NavDropdown.Item onClick={this.handleLogout} href="/">Logout</NavDropdown.Item>
+					</NavDropdown>
 				</Form>
 			);
 		} else {

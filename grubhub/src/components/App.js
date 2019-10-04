@@ -9,15 +9,13 @@ import OwnerLogin from './OwnerLogin';
 import OwnerSignUp from './OwnerSignUp';
 import OwnerHome from './OwnerHome';
 import BuyerHome from './BuyerHome';
-
+import RestaurantInfo from './RestaurantInfo'
 import '../css/App.css';
 
 class App extends Component {
 
   render() {
-    const btnStyle = {
-      margin: '5px'
-    }
+    
     return (
       <BrowserRouter>
         <div>
@@ -30,6 +28,7 @@ class App extends Component {
           <Route path="/ownersignup" component={OwnerSignUp}/>
           <Route path="/ownerhome" component={OwnerHome}/>
           <Route path="/buyerhome" component={BuyerHome}/>
+          <Route path="/restaurantinfo" component={RestaurantInfo}/>
         </div>
       </BrowserRouter>
     );

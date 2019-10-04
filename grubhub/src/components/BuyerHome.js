@@ -10,8 +10,14 @@ class BuyerHome extends Component {
 
   	
 	render() {
+        let redirectVar = null;
+		if(!cookie.load('grubhubcookie')){
+			redirectVar = <Redirect to= "/buyerlogin"/>
+        }
+        
         return(
             <div className="offset-sm-4 col-sm-3">
+                {redirectVar}
 				<Form>
 					<Form.Text>
 					    Buyer's Home Page
