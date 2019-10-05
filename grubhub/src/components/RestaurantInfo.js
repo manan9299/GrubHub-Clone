@@ -17,7 +17,8 @@ class RestaurantInfo extends Component {
             city : "",
             zip : "",
             contact : "",
-            updateMessage : ""
+            updateMessage : "",
+            infoNotFound : false
         }
     }
 
@@ -38,12 +39,17 @@ class RestaurantInfo extends Component {
                         zip : payload["zip"],
                         contact : payload["contact"]
                     });
+                } else if (status == 404){
+                    this.setState({
+                        infoNotFound : true
+                    });
+
                 }
             });
     }
 
     submitUpdate = () => {
-        let {restaurantId, name, address, city, zip, contact} = this.state;
+        let {restaurantId, name, address, city, zip, contact, infoNotFound} = this.state;
         
         let reqData = {
             restaurantId : restaurantId,
@@ -51,7 +57,8 @@ class RestaurantInfo extends Component {
             address : address,
             city : city,
             zip : zip,
-            contact : contact
+            contact : contact,
+            infoNotFound : infoNotFound
         }
 
         axios.post("http://localhost:3001/updateRestaurant", reqData)
@@ -62,7 +69,8 @@ class RestaurantInfo extends Component {
                     let status = response.data.status;
                     if (status == 200){
                         this.setState({
-                            updateMessage : "Restaurant Info updated successfully"
+                            updateMessage : "Restaurant Info updated successfully",
+                            infoNotFound : false
                         });
                     } else {
                         this.setState({

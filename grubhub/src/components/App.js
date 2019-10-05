@@ -9,7 +9,9 @@ import OwnerLogin from './OwnerLogin';
 import OwnerSignUp from './OwnerSignUp';
 import OwnerHome from './OwnerHome';
 import BuyerHome from './BuyerHome';
-import RestaurantInfo from './RestaurantInfo'
+import RestaurantInfo from './RestaurantInfo';
+import AddSection from './AddSection';
+
 import '../css/App.css';
 
 class App extends Component {
@@ -29,6 +31,7 @@ class App extends Component {
           <Route path="/ownerhome" component={OwnerHome}/>
           <Route path="/buyerhome" component={BuyerHome}/>
           <Route path="/restaurantinfo" component={RestaurantInfo}/>
+          <Route path="/addsection" component={AddSection}/>
         </div>
       </BrowserRouter>
     );

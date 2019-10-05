@@ -27,7 +27,7 @@ class CommonNavbar extends Component {
 					<Button variant="link"  style={btnStyle} href='/ownerhome'>Home</Button>
 					<NavDropdown title="Manage Account" id="nav-dropdown">
 						<NavDropdown.Item href='/restaurantinfo'>Update Restaurant Info</NavDropdown.Item>
-						<NavDropdown.Item >Update Sections</NavDropdown.Item>
+						<NavDropdown.Item href='/addsection'>Update Sections</NavDropdown.Item>
 						<NavDropdown.Item >Update Menu</NavDropdown.Item>
 						<NavDropdown.Divider />
 						<NavDropdown.Item >View Profile</NavDropdown.Item>
