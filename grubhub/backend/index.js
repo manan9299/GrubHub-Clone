@@ -219,6 +219,61 @@ app.get('/getRestaurantInfo', (req,res) => {
     }
 });
 
+app.get('/getsections', (req,res) => {
+
+    if (req.session.userType == OWNER){
+        let ownerId = req.session.userId;
+        let query = "SELECT restaurant_id FROM grubhub.Restaurants where restaurant_owner_id='" + ownerId + "'";
+        console.log("Query : " + query);
+        pool.query(query, (err, results) => {
+
+            console.log("Error : " + JSON.stringify(err));
+            console.log("Result : " + JSON.stringify(results));
+
+            if (err){
+                console.error("Error : " + JSON.stringify(err));
+                res.json({
+                    "status" : 500,
+                    "payload" : "",
+                    "restaurant_id" : ""
+                });
+            } else {
+                
+                let restaurant_id = results[0]["restaurant_id"];
+                query = "SELECT section_name FROM grubhub.Menu_Sections where parent_restaurant_id='" + restaurant_id + "' ORDER BY section_name ASC";
+
+                console.log("Query : " + query);
+
+                pool.query(query, (err, results) => {
+                    console.log("Error : " + JSON.stringify(err));
+                    console.log("Result : " + JSON.stringify(results));
+                    
+                    if (err){
+                        console.error("Error : " + JSON.stringify(err));
+                        res.json({
+                            "status" : 500,
+                            "payload" : "",
+                            "restaurant_id" : ""
+                        });
+                    } else {
+                        res.json({
+                            "status" : 200,
+                            "payload" : results,
+                            "restaurant_id" : restaurant_id
+                        });
+                    }
+                });
+            }
+        });
+    } else {
+        res.json({
+            "status" : 403,
+            "payload" : "",
+            "restaurant_id" : ""
+        });
+    }
+});
+
 app.post('/updateRestaurant', (req,res) => {
     let {restaurantId, name, address, city, zip, contact, infoNotFound} = req.body;
     
@@ -260,10 +315,6 @@ app.post('/updateRestaurant', (req,res) => {
         });
     }
 });
-
-// var getRestaurantId = (ownerId) => {
-
-// }
 
 app.post('/addsection', (req,res) => {
 
@@ -311,6 +362,41 @@ app.post('/addsection', (req,res) => {
                     });
                 }
             });
+        });
+    } else {
+        res.json({
+            "status" : 403
+        });
+    }
+});
+
+app.post('/addItem', (req,res) => {
+
+    console.log("REQUEST====" + JSON.stringify(req.body));
+    console.log("REQUEST====" + req.session.userType);
+    
+    if (req.session.userType == OWNER){
+        let ownerId = req.session.userId;
+        let {name, description, price, section, restaurantId} = req.body;
+        // INSERT INTO `grubhub`.`Menu_Items` (`item_name`, `description`, `section_name`, `price`, `parent_restaurant_id`) VALUES ('Tomato', 'CreamTomato', 'Soups', '2.99', '3');
+
+        let query = "INSERT INTO `grubhub`.`Menu_Items` (`item_name`, `description`, `section_name`, `price`, `parent_restaurant_id`) VALUES ('" + name + "', '" + description + "', '" + section + "', '" + price + "', '" + restaurantId + "')"
+        
+        console.log("Query : " + query);
+
+        pool.query(query, (err, results) => {
+            if (err){
+                console.error("Error : " + JSON.stringify(err));
+                res.json({
+                    "status" : 500
+                });
+            }
+
+            if (results){
+                res.json({
+                    "status" : 200
+                });
+            }
         });
     } else {
         res.json({

@@ -11,6 +11,7 @@ import OwnerHome from './OwnerHome';
 import BuyerHome from './BuyerHome';
 import RestaurantInfo from './RestaurantInfo';
 import AddSection from './AddSection';
+import AddItem from './AddItem';
 
 import '../css/App.css';
 
@@ -32,6 +33,7 @@ class App extends Component {
           <Route path="/buyerhome" component={BuyerHome}/>
           <Route path="/restaurantinfo" component={RestaurantInfo}/>
           <Route path="/addsection" component={AddSection}/>
+          <Route path="/additem" component={AddItem}/>
         </div>
       </BrowserRouter>
     );
