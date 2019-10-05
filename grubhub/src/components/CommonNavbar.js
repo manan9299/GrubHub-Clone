@@ -13,7 +13,7 @@ class CommonNavbar extends Component {
     }
 
 	render() {
-		let loginButtons = null;
+		let navBarButtons = null;
 
 		const btnStyle = {
 			margin: '5px'
@@ -21,9 +21,10 @@ class CommonNavbar extends Component {
 
 		if (cookie.load("grubhubcookie")){
 			console.log("Active Session detected !!");
-			loginButtons = (
+			navBarButtons = (
 				// className="offset-sm-10"
-				<Form className="offset-sm-9" inline>
+				<Form className="offset-sm-8" inline>
+					<Button variant="link"  style={btnStyle} href='/ownerhome'>Home</Button>
 					<NavDropdown title="Manage Account" id="nav-dropdown">
 						<NavDropdown.Item href='/restaurantinfo'>Update Restaurant Info</NavDropdown.Item>
 						<NavDropdown.Item >Update Sections</NavDropdown.Item>
@@ -36,7 +37,7 @@ class CommonNavbar extends Component {
 			);
 		} else {
 			console.log("No active sessions detected");
-			loginButtons = (
+			navBarButtons = (
 				<Form className="offset-sm-8" inline>
 					<Button variant="danger"  style={btnStyle} href='/buyerlogin'>Login</Button>
 					<Button variant="outline-danger"  style={btnStyle} href='buyersignup'>Sign Up</Button>
@@ -49,7 +50,7 @@ class CommonNavbar extends Component {
 			<div>
 			<Navbar bg="light" expand="lg">
 				<Navbar.Brand href="#home" bsPrefix="mainNavBrand-logo">GRUBHUB</Navbar.Brand>
-				{loginButtons}
+				{navBarButtons}
 			</Navbar>
 			</div>
 		);

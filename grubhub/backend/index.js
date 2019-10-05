@@ -115,6 +115,9 @@ app.post('/ownersignup', function(req, res) {
             });
         }
         if (results && results.length != 0){
+            res.json({
+                "status" : 200
+            });
         } else {
             res.json({
                 "status" : 403
@@ -155,6 +158,96 @@ app.post('/ownerlogin', function(req, res) {
             });
         }
     });      
+});
+
+app.get('/getRestaurantInfo', (req,res) => {
+
+    if (req.session.userType == OWNER){
+        let ownerId = req.session.userId;
+        let query = "SELECT restaurant_id, restaurant_name, address, city, zip_code, phone_number FROM grubhub.Restaurants where restaurant_owner_id='" + ownerId + "'";
+        console.log("Query : " + query);
+        pool.query(query, (err, results) => {
+
+            console.log("Error : " + JSON.stringify(err));
+            console.log("Result : " + JSON.stringify(results));
+
+            if (err){
+                console.error("Error : " + JSON.stringify(err));
+                res.json({
+                    "status" : 500,
+                    "data" : ""
+                });
+            }
+
+            if (results){
+                let payload = {
+                    restaurantId : "",
+                    name : "",
+                    address : "",
+                    city : "",
+                    zip : "",
+                    contact : ""
+                };
+
+                if (results.length != 0){
+                    let {restaurant_id, restaurant_name, address, city, zip_code, phone_number} = results[0];
+                    payload = {
+                        restaurantId : restaurant_id,
+                        name : restaurant_name,
+                        address : address,
+                        city : city,
+                        zip : zip_code,
+                        contact : phone_number
+                    };
+                }
+
+                res.json({
+                    "status" : 200,
+                    "payload" : payload
+                });
+            }
+        });
+    } else {
+        res.json({
+            "status" : 403,
+            "data" : ""
+        });
+    }
+});
+
+app.post('/updateRestaurant', (req,res) => {
+    let {restaurantId, name, address, city, zip, contact} = req.body;
+
+    // UPDATE `grubhub`.`Restaurants` SET `restaurant_name` = 'Rest111', `address` = '1332, Address1', `city` = 'San Jose11' WHERE (`restaurant_id` = '1');
+
+    if (req.session.userType == OWNER){
+        let ownerId = req.session.userId;
+        let query = "UPDATE `grubhub`.`Restaurants` SET `restaurant_name` = '"+ name + "', `address` = '"+ address + "', `city` = '"+ city + "', `zip_code` = '"+ zip + "', `phone_number` = '"+ contact + "' WHERE (`restaurant_id` = '"+ restaurantId + "')";
+
+        console.log("Query : " + query);
+        pool.query(query, (err, results) => {
+
+            console.log("Error : " + JSON.stringify(err));
+            console.log("Result : " + JSON.stringify(results));
+
+            if (err){
+                console.error("Error : " + JSON.stringify(err));
+                res.json({
+                    "status" : 500
+                });
+            }
+
+            if (results){
+                res.json({
+                    "status" : 200
+                });
+            }
+        });
+    } else {
+        res.json({
+            "status" : 403
+        });
+    }
 });
 
 

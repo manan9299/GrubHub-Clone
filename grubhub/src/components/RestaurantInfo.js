@@ -8,42 +8,185 @@ import '../css/App.css';
 
 class RestaurantInfo extends Component {
 
+    constructor(){
+        super();
+        this.state = {
+            restaurantId : "",
+            name : "",
+            address : "",
+            city : "",
+            zip : "",
+            contact : "",
+            updateMessage : ""
+        }
+    }
+
+    componentDidMount(){
+        axios.defaults.withCredentials = true;
+
+        axios.get("http://localhost:3001/getRestaurantInfo")
+            .then(response => {
+                console.log("Response is : " + JSON.stringify(response, null, 4));
+                let {status, payload} = response.data;
+                
+                if (status == 200){
+                    this.setState({
+                        restaurantId : payload["restaurantId"],
+                        name : payload["name"],
+                        address : payload["address"],
+                        city : payload["city"],
+                        zip : payload["zip"],
+                        contact : payload["contact"]
+                    });
+                }
+            });
+    }
+
+    submitUpdate = () => {
+        let {restaurantId, name, address, city, zip, contact} = this.state;
+        
+        let reqData = {
+            restaurantId : restaurantId,
+            name : name,
+            address : address,
+            city : city,
+            zip : zip,
+            contact : contact
+        }
+
+        axios.post("http://localhost:3001/updateRestaurant", reqData)
+            .then( response => {
+                console.log("Response is : " + JSON.stringify(response));
+
+                if(response.status == 200){
+                    let status = response.data.status;
+                    if (status == 200){
+                        this.setState({
+                            updateMessage : "Restaurant Info updated successfully"
+                        });
+                    } else {
+                        this.setState({
+                            updateMessage : "Failed to update restaurant Info"
+                        });
+                    }
+                } else {
+                    this.setState({
+                        updateMessage : "Failed to update restaurant Info"
+                    });
+                }
+            });
+
+
+    }
+
+    getTableContents = () => {
+        
+        let { name, address, city, contact, zip} = this.state;
+        let tableData = (
+            <tbody>
+                {/* <tr>
+                    <td style={{fontWeight : 'bold', width: '50%'}}>Name</td>
+                    <td>{restaurantInfo["Name"]}</td>
+                </tr> */}
+                <tr>
+                    <td style={{fontWeight : 'bold', width: '50%'}}>Name</td>
+                    <td>
+                        <Form.Group controlId="formBasicEmail">
+                            <Form.Control type="text" defaultValue={name}
+                                onChange={(e) => this.setState({
+                                    name : e.target.value
+                                }) }
+                            />
+                        </Form.Group>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td style={{fontWeight : 'bold'}}>Address</td>
+                    <td>
+                        <Form.Group controlId="formBasicEmail">
+                            <Form.Control type="text" defaultValue={address}
+                                onChange={(e) => this.setState({
+                                    address : e.target.value
+                                }) }
+                            />
+                        </Form.Group>
+                    </td>
+                </tr>
+                <tr>
+                    <td style={{fontWeight : 'bold'}}>City</td>
+                    <td >
+                        <Form.Group controlId="formBasicEmail">
+                            <Form.Control type="text" defaultValue={city}
+                                onChange={(e) => this.setState({
+                                    city : e.target.value
+                                }) }
+                            />
+                        </Form.Group>
+                    
+                    </td>
+                </tr>
+                <tr>
+                    <td style={{fontWeight : 'bold'}}>ZIP</td>
+                    <td >
+                        <Form.Group controlId="formBasicEmail">
+                            <Form.Control type="text" defaultValue={zip}
+                                onChange={(e) => {this.setState({
+                                    zip : e.target.value
+                                })} }
+                            />
+                        </Form.Group>
+                    </td>
+                </tr>
+                <tr>
+                    <td style={{fontWeight : 'bold'}}>Contact</td>
+                    <td >
+                        <Form.Group controlId="formBasicEmail">
+                            <Form.Control type="text" defaultValue={contact}
+                                onChange={(e) => this.setState({
+                                    contact : e.target.value
+                                }) }
+                            />
+                        </Form.Group>
+                    </td>
+                </tr>
+                <tr>
+                    <td colSpan='2'>
+                        <Button onClick={this.submitUpdate} variant="primary" type="submit" block>
+                            Update Restaurant Info
+                        </Button>
+                    </td>
+
+                </tr>
+            </tbody>
+            
+        );
+        return tableData;
+    }
+
   	
 	render() {
         let redirectVar = null;
         // Uncomment this
-		// if(!cookie.load('grubhubcookie')){
-		// 	redirectVar = <Redirect to= "/buyerlogin"/>
-        // }
+		if(!cookie.load('grubhubcookie')){
+			redirectVar = <Redirect to= "/buyerlogin"/>
+        }
+
+        let tableData = this.getTableContents();
 
         return(
             // className="offset-sm-3 col-sm-8"
             <div >
                 {redirectVar}
-                <Table bordered>
-                    
-                    <tbody>
-                        <tr>
-                            <td style={{fontWeight : 'bold'}}>Name</td>
-                            <td>Mark</td>
-                        </tr>
-                        <tr>
-                            <td style={{fontWeight : 'bold'}}>Address</td>
-                            <td>Jacob</td>
-                        </tr>
-                        <tr>
-                            <td style={{fontWeight : 'bold'}}>City</td>
-                            <td >Larry the Bird</td>
-                        </tr>
-                        <tr>
-                            <td style={{fontWeight : 'bold'}}>ZIP</td>
-                            <td >Larry the Bird</td>
-                        </tr>
-                        <tr>
-                            <td style={{fontWeight : 'bold'}}>Contact</td>
-                            <td >Larry the Bird</td>
-                        </tr>
-                    </tbody>
+                
+                <Table className="offset-sm-3" style={{width: '50%', marginTop: '2rem'}}>
+                <thead>
+                    <tr>
+                        <th colSpan='2' style={{fontWeight: 'bold', fontSize: '30px'}}>Restaurant Info :</th>
+                    </tr>
+                </thead>
+                    {tableData}
+                    {this.state.updateMessage}
                 </Table>
 			</div>
         );
