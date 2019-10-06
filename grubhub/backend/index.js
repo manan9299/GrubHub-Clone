@@ -51,7 +51,7 @@ app.post('/login', function(req, res) {
             });
         }
         if (results && results.length != 0){
-            res.cookie("grubhubcookie", "user", {
+            res.cookie("grubhubusercookie", "user", {
                 maxAge : 900000,
                 httpOnly : false
             });
@@ -84,8 +84,7 @@ app.post('/signup', function(req, res) {
             res.json({
                 "status" : 500
             });
-        }
-        if (results && results.length != 0){
+        } else if (results && results.length != 0){
             res.json({
                 "status" : 200
             });
@@ -404,6 +403,54 @@ app.post('/addItem', (req,res) => {
         });
     }
 });
+
+app.post('/setUserPref', (req,res) => {
+
+    if (req.session.userType == BUYER){
+        req.session.userDish = req.body.dishName;
+        
+        res.json({
+            "status" : 200
+        });
+        
+    } else {
+        res.json({
+            "status" : 403
+        });
+    }
+});
+
+app.get('/getFilteredRestaurants', (req,res) => {
+
+    if (req.session.userType == BUYER){
+        let itemName = req.session.userDish;
+
+        let query = "SELECT restaurant_id, restaurant_name, address, city, phone_number FROM grubhub.Restaurants where restaurant_id in (select parent_restaurant_id from grubhub.Menu_Items where upper(item_name)=upper('" + itemName + "'))";
+
+        pool.query(query, function(err, results){
+            if (err){
+                console.error("Error : " + JSON.stringify(err));
+                res.json({
+                    "status" : 500,
+                    "payload" : ""
+                });
+            } else {
+                console.log("Results : " + JSON.stringify(results));
+                res.json({
+                    "status" : 200,
+                    "payload" : results
+                });
+            }
+        });
+    } else {
+        res.json({
+            "status" : 403,
+            "payload" : ""
+        });
+    }
+});
+
+
 
 
 app.listen(3001);

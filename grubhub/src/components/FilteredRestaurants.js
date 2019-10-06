@@ -1,0 +1,100 @@
+import React, {Component} from 'react';
+import { Form, Button, Table } from 'react-bootstrap';
+import axios from 'axios';
+import cookie from 'react-cookies';
+import {Redirect} from 'react-router';
+
+import '../css/App.css';
+
+class FilteredRestaurants extends Component {
+
+    constructor(){
+        super();
+        this.state = {
+            restaurantList : []
+        }
+    }
+
+    componentDidMount(){
+        
+        axios.defaults.withCredentials = true;
+
+        axios.get("http://localhost:3001/getFilteredRestaurants")
+            .then(response => {
+                console.log("Response is : " + JSON.stringify(response, null, 4));
+                let {status, payload} = response.data;
+                
+                if (status == 200){
+                    this.setState({
+                        restaurantList : payload
+                    });
+                }
+            });
+    }
+
+    setRestaurant = (event) => {
+        event.preventDefault();
+        
+
+    }
+
+    getRestaurants = () => {
+        let restaurantList = this.state.restaurantList;
+
+        if (restaurantList.length == 0){
+            return (
+                <tr>
+                    <td colSpan='4'>No Results</td>
+                </tr>
+            );
+        } else {
+            let items = restaurantList.map((restaurant) => {
+                return (
+                    <tr>
+                        {/* <Button variant="link" id={restaurant["restaurant_id"]}>{restaurant["restaurant_name"]}</Button> */}
+                        <td><Button variant="link" onClick={this.setRestaurant} id={restaurant["restaurant_id"]}>{restaurant["restaurant_name"]}</Button></td>
+                        <td>{restaurant["address"]}</td>
+                        <td>{restaurant["city"]}</td>
+                        <td>{restaurant["phone_number"]}</td>
+                    </tr>
+                );
+            });
+            return items;
+        }
+
+    }
+	
+	render() {
+        let redirectVar = null;
+		if(!cookie.load('grubhubusercookie')){
+			redirectVar = <Redirect to= "/buyerlogin"/>
+        }
+        let restaurantList = this.getRestaurants();
+        
+        return(
+            <div >
+                {redirectVar}
+				<Table className="offset-sm-3" style={{width: '50%', marginTop: '2rem'}}>
+                <thead>
+                    <tr>
+                        <th colSpan='4' style={{fontWeight: 'bold', fontSize: '30px'}}>Restaurants :</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style={{fontWeight: 'bold', fontSize: '20px'}}>Name</td>
+                        <td style={{fontWeight: 'bold', fontSize: '20px'}}>Address</td>
+                        <td style={{fontWeight: 'bold', fontSize: '20px'}}>City</td>
+                        <td style={{fontWeight: 'bold', fontSize: '20px'}}>Contact</td>
+                    </tr>
+                    {restaurantList}            
+                </tbody>
+                    
+                </Table>
+			</div>
+        );
+        
+	}
+}
+
+export default FilteredRestaurants;

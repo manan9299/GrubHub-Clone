@@ -8,20 +8,77 @@ import '../css/App.css';
 
 class BuyerHome extends Component {
 
-  	
+	constructor(){
+		super();
+		this.state = {
+			dishName : "",
+			toRestaurantList : null,
+			submitMessage : ""
+		}
+	}
+
+	findFood = (event) => {
+		event.preventDefault();
+		let dishName = this.state.dishName;
+
+		let reqData = {
+			dishName : dishName
+		}
+
+		axios.defaults.withCredentials = true;
+
+		axios.post("http://localhost:3001/setUserPref", reqData)
+			.then( response => {
+
+                if(response.status == 200){
+					let status = response.data.status;
+					
+                    if (status == 200){
+                        this.setState({
+							toRestaurantList : <Redirect to='/filteredrestaurants' />
+						});
+                    } else {
+                        this.setState({
+							toRestaurantList : <Redirect to='/' />
+						});
+                    }
+                } else {
+                    this.setState({
+						submitMessage : "Could not get a response from the server"
+					});
+                }
+			});
+	}
+
+	dishChangeHandler = (event) => {
+		this.setState({
+			dishName : event.target.value
+		})
+	}
+	
 	render() {
         let redirectVar = null;
-		if(!cookie.load('grubhubcookie')){
+		if(!cookie.load('grubhubusercookie')){
 			redirectVar = <Redirect to= "/buyerlogin"/>
         }
         
         return(
             <div className="offset-sm-4 col-sm-3">
-                {redirectVar}
+				{redirectVar}
+				{this.state.toRestaurantList}
 				<Form>
 					<Form.Text>
-					    Buyer's Home Page
+						Who delivers in your City?
 					</Form.Text>
+					<Form.Group >
+						<Form.Label>Enter a dish</Form.Label>
+						<Form.Control onChange={this.dishChangeHandler} placeholder='Pizza, Tacos, etc.' className='form-group' type="text" />
+					</Form.Group>
+					<Form.Group>
+						<Button onClick={this.findFood} variant="primary" block>
+							Find Food
+						</Button>
+					</Form.Group>
 				</Form>
 			</div>
         );

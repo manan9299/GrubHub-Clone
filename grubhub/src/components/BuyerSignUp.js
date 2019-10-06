@@ -146,7 +146,7 @@ class BuyerSignUp extends Component {
 						<Form.Control onChange={this.contactChangeHandler} type="text" />
 						
 					</Form.Group>
-						<Form.Group>
+					<Form.Group>
 						<Button onClick={this.submitSignUp} variant="primary" type="submit" block>
 							Create your Account
 						</Button>

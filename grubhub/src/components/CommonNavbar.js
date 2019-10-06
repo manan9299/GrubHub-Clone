@@ -10,7 +10,11 @@ class CommonNavbar extends Component {
     //handle logout to destroy the cookie
     handleLogout = () => {
         cookie.remove('grubhubcookie', { path: '/' })
-    }
+	}
+	
+	handleUserLogout = () => {
+		cookie.remove('grubhubusercookie', { path: '/' })
+	}
 
 	render() {
 		let navBarButtons = null;
@@ -35,6 +39,23 @@ class CommonNavbar extends Component {
 					</NavDropdown>
 				</Form>
 			);
+		} else if (cookie.load("grubhubusercookie")){
+			console.log("Active Session detected !!");
+			navBarButtons = (
+				// className="offset-sm-10"
+				<Form className="offset-sm-8" inline>
+					<Button variant="link"  style={btnStyle} href='/buyerhome'>Home</Button>
+					<NavDropdown title="Manage Account" id="nav-dropdown">
+						<NavDropdown.Item href='/'>View Upcoming Orders</NavDropdown.Item>
+						<NavDropdown.Item href='/'>View Past Orders</NavDropdown.Item>
+						<NavDropdown.Item href='/'>Cart</NavDropdown.Item>
+						<NavDropdown.Divider />
+						<NavDropdown.Item >View Profile</NavDropdown.Item>
+						<NavDropdown.Item onClick={this.handleUserLogout} href="/">Logout</NavDropdown.Item>
+					</NavDropdown>
+				</Form>
+			);
+
 		} else {
 			console.log("No active sessions detected");
 			navBarButtons = (
