@@ -58,7 +58,7 @@ class OwnerSignUp extends Component {
 					} else {
 						this.setState({
 							authFlag : false,
-							authMessage : "Internal Server Error",
+							authMessage : "Email already used by another user",
 						});
 					}
 				} else {
@@ -78,7 +78,8 @@ class OwnerSignUp extends Component {
 
 	emailChangeHandler = (event) => {
 		let email = event.target.value;
-		if (email != ""){
+		let emailRegex = new RegExp(".+@.+\..+");
+		if (email != "" && emailRegex.test(email)){
 			this.setState({
 				email : email,
 				isEmailValid : true

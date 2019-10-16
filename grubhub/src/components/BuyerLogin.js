@@ -67,7 +67,8 @@ class BuyerLogin extends Component {
 
 	emailChangeHandler = (event) => {
 		let email = event.target.value;
-		if (email != ""){
+		let emailRegex = new RegExp(".+@.+\..+");
+		if (email != "" && emailRegex.test(email)){
 			this.setState({
 				email : email,
 				isEmailValid : true

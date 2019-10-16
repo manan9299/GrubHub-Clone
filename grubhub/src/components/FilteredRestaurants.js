@@ -11,7 +11,8 @@ class FilteredRestaurants extends Component {
     constructor(){
         super();
         this.state = {
-            restaurantList : []
+            restaurantList : [],
+            toRestaurantDetails : null
         }
     }
 
@@ -34,6 +35,28 @@ class FilteredRestaurants extends Component {
 
     setRestaurant = (event) => {
         event.preventDefault();
+
+        let reqData = {
+            selectedRestaurantId : event.target.id
+        }
+
+        axios.post("http://localhost:3001/setSelectedRestaurant", reqData)
+            .then( response => {
+                console.log("Response is : " + JSON.stringify(response));
+
+                if(response.status == 200){
+                    let status = response.data.status;
+                    if (status == 200){
+                        this.setState({
+                            toRestaurantDetails : <Redirect to='/showrestaurantmenu' />
+                        });
+                    } else {
+                        this.setState({
+                            toRestaurantDetails : <Redirect to='/buyerhome' />
+                        });
+                    }
+                }
+            });
         
 
     }
@@ -51,7 +74,6 @@ class FilteredRestaurants extends Component {
             let items = restaurantList.map((restaurant) => {
                 return (
                     <tr>
-                        {/* <Button variant="link" id={restaurant["restaurant_id"]}>{restaurant["restaurant_name"]}</Button> */}
                         <td><Button variant="link" onClick={this.setRestaurant} id={restaurant["restaurant_id"]}>{restaurant["restaurant_name"]}</Button></td>
                         <td>{restaurant["address"]}</td>
                         <td>{restaurant["city"]}</td>
@@ -74,6 +96,7 @@ class FilteredRestaurants extends Component {
         return(
             <div >
                 {redirectVar}
+                {this.state.toRestaurantDetails}
 				<Table className="offset-sm-3" style={{width: '50%', marginTop: '2rem'}}>
                 <thead>
                     <tr>

@@ -12,7 +12,9 @@ import BuyerHome from './BuyerHome';
 import RestaurantInfo from './RestaurantInfo';
 import AddSection from './AddSection';
 import AddItem from './AddItem';
-import FilteredRestaurants from './FilteredRestaurants'
+import FilteredRestaurants from './FilteredRestaurants';
+import RestaurantMenu from './RestaurantMenu';
+import ViewCart from './ViewCart';
 
 import '../css/App.css';
 
@@ -36,6 +38,8 @@ class App extends Component {
           <Route path="/addsection" component={AddSection}/>
           <Route path="/additem" component={AddItem}/>
           <Route path="/filteredrestaurants" component={FilteredRestaurants}/>
+          <Route path="/showrestaurantmenu" component={RestaurantMenu}/>
+          <Route path="/viewcart" component={ViewCart}/>
         </div>
       </BrowserRouter>
     );

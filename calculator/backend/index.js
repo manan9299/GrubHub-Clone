@@ -20,21 +20,27 @@ app.use(function(req, res, next) {
 });
 
 app.post('/calculate', function(req, res) {
-    let expression = req.body.expression;
-    let result = "";
-    console.log("Expression : " + expression);
-
     try {
-        result = eval(expression);
-    } catch (error) {
-        result = error;
-    }
-    result = result.toString();
-    console.log("RESULT : " + result);
+        let expression = req.body.expression;
 
-    res.json({
-        "result" : result
-    });
+        let result = "";
+
+        result = eval(expression);
+        
+        result = result.toString();
+
+        console.log("RESULT : " + result);
+
+        res.json({
+            "result" : result
+        });
+        
+    } catch (error) {
+        res.json({
+            "result" : error.toString()
+        });
+    }
+    
 });
 
 app.listen(3001);

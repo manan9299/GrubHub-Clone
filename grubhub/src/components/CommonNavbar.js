@@ -48,7 +48,7 @@ class CommonNavbar extends Component {
 					<NavDropdown title="Manage Account" id="nav-dropdown">
 						<NavDropdown.Item href='/'>View Upcoming Orders</NavDropdown.Item>
 						<NavDropdown.Item href='/'>View Past Orders</NavDropdown.Item>
-						<NavDropdown.Item href='/'>Cart</NavDropdown.Item>
+						<NavDropdown.Item href='/viewcart'>Cart</NavDropdown.Item>
 						<NavDropdown.Divider />
 						<NavDropdown.Item >View Profile</NavDropdown.Item>
 						<NavDropdown.Item onClick={this.handleUserLogout} href="/">Logout</NavDropdown.Item>
