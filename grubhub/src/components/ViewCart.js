@@ -21,7 +21,7 @@ class ViewCart extends Component {
         
         axios.defaults.withCredentials = true;
 
-        axios.get("http://localhost:3001/getCartItems")
+        axios.get("http://3.95.188.106:3001/getCartItems")
             .then(response => {
                 console.log("Items Response is : " + JSON.stringify(response, null, 4));
                 let {status, payload} = response.data;
@@ -63,7 +63,7 @@ class ViewCart extends Component {
 
         axios.defaults.withCredentials = true;
 
-        axios.post('http://localhost:3001/placeOrder')
+        axios.post('http://3.95.188.106:3001/placeOrder')
             .then(response => {
                 console.log("response is " + JSON.stringify(response));
                 if (response.status == 200){

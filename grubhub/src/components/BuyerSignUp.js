@@ -40,7 +40,7 @@ class BuyerSignUp extends Component {
 		// set withCredentials to true in order to send cookies with request
 		axios.defaults.withCredentials = true;
 
-		axios.post('http://localhost:3001/signup', reqData)
+		axios.post('http://3.95.188.106:3001/signup', reqData)
 			.then(response => {
 				console.log("response is " + JSON.stringify(response));
 				if (response.status == 200){
