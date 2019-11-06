@@ -18,7 +18,7 @@ class FilteredRestaurants extends Component {
 
     componentDidMount(){
         
-        axios.defaults.withCredentials = true;
+        axios.defaults.headers.common['Authorization'] = localStorage.getItem('grubhubUserToken');
 
         axios.get("http://localhost:3001/getFilteredRestaurants")
             .then(response => {
@@ -40,6 +40,8 @@ class FilteredRestaurants extends Component {
             selectedRestaurantId : event.target.id
         }
 
+        axios.defaults.headers.common['Authorization'] = localStorage.getItem('grubhubUserToken');
+
         axios.post("http://localhost:3001/setSelectedRestaurant", reqData)
             .then( response => {
                 console.log("Response is : " + JSON.stringify(response));
@@ -57,8 +59,6 @@ class FilteredRestaurants extends Component {
                     }
                 }
             });
-        
-
     }
 
     getRestaurants = () => {
@@ -72,25 +72,25 @@ class FilteredRestaurants extends Component {
             );
         } else {
             let items = restaurantList.map((restaurant) => {
+                restaurant = restaurant["restaurant"];
                 return (
                     <tr>
-                        <td><Button variant="link" onClick={this.setRestaurant} id={restaurant["restaurant_id"]}>{restaurant["restaurant_name"]}</Button></td>
+                        <td><Button variant="link" onClick={this.setRestaurant} id={restaurant["name"]}>{restaurant["name"]}</Button></td>
                         <td>{restaurant["address"]}</td>
                         <td>{restaurant["city"]}</td>
-                        <td>{restaurant["phone_number"]}</td>
+                        <td>{restaurant["contact"]}</td>
                     </tr>
                 );
             });
             return items;
         }
-
     }
 	
 	render() {
         let redirectVar = null;
-		if(!cookie.load('grubhubusercookie')){
+		if(!localStorage.getItem('grubhubUserToken')){
 			redirectVar = <Redirect to= "/buyerlogin"/>
-        }
+		}
         let restaurantList = this.getRestaurants();
         
         return(

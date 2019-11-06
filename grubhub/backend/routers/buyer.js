@@ -1,20 +1,35 @@
 const express = require('express')
 var pool = require('../database');
-
+const buyerAuth = require('../buyerauth');
 const router = express.Router();
 
 var constants = require('../lib/constants');
+var mongoDatabase = require('../mongoDatabase');
+var mongodb;
+mongoDatabase.getMongoConnection().then((connection) => {
+    mongodb = connection;
+});
+
 const BUYER = constants.BUYER;
 
-router.post('/setUserPref', (req,res) => {
+router.post('/setUserPref', buyerAuth, (req,res) => {
 
-    if (req.session.userType == BUYER){
-        req.session.userDish = req.body.dishName;
+    if (req.userType == BUYER){
+        let dishName = req.body.dishName;
         
-        res.json({
-            "status" : 200
+        const buyers = mongodb.collection('buyers');
+    
+        buyers.updateOne({email : req.user.email}, { $set : {dishPref : dishName} }, {upsert : true}).then(async(buyer) => {
+            res.json({
+                "status" : 200
+            });
+        }).catch((err) => {
+            console.log(err.toString());
+            res.json({
+                "status" : 404,
+                "message" : "User not found"
+            });
         });
-        
     } else {
         res.json({
             "status" : 403
@@ -22,15 +37,25 @@ router.post('/setUserPref', (req,res) => {
     }
 });
 
-router.post('/setSelectedRestaurant', (req,res) => {
+router.post('/setSelectedRestaurant', buyerAuth, (req,res) => {
 
-    if (req.session.userType == BUYER){
-        req.session.selectedRestaurantId = req.body.selectedRestaurantId;
+    if (req.userType == BUYER){
+
+        let restaurantPref = req.body.selectedRestaurantId;
         
-        res.json({
-            "status" : 200
+        const buyers = mongodb.collection('buyers');
+    
+        buyers.updateOne({email : req.user.email}, { $set : {restaurantPref : restaurantPref} }, {upsert : true}).then(async(buyer) => {
+            res.json({
+                "status" : 200
+            });
+        }).catch((err) => {
+            console.log(err.toString());
+            res.json({
+                "status" : 404,
+                "message" : "User not found"
+            });
         });
-        
     } else {
         res.json({
             "status" : 403
@@ -38,9 +63,11 @@ router.post('/setSelectedRestaurant', (req,res) => {
     }
 });
 
-router.post('/addToCart', (req,res) => {
+router.post('/addToCart', buyerAuth, (req,res) => {
 
-    if (req.session.userType == BUYER){
+    if (req.userType == BUYER){
+
+
         let buyerId = req.session.userId;
         let restaurantId = req.session.selectedRestaurantId;
 
@@ -155,28 +182,35 @@ router.get('/getCartItems', (req,res) => {
 });
 
 
-router.get('/getRestaurantItems', (req,res) => {
+router.get('/getRestaurantItems', buyerAuth, (req,res) => {
 
-    if (req.session.userType == BUYER){
+    if (req.userType == BUYER){
 
-        let selectedRestaurantId = req.session.selectedRestaurantId;
+        let selectedRestaurantId = req.user.restaurantPref;
 
-        let query = "SELECT item_name, description, section_name , price FROM grubhub.Menu_Items where parent_restaurant_id='" + selectedRestaurantId + "' order by section_name";
+        const items = mongodb.collection('items');
 
-        pool.query(query, function(err, results){
-            if (err){
-                console.error("Error : " + JSON.stringify(err));
-                res.json({
-                    "status" : 500,
-                    "payload" : ""
-                });
-            } else {
-                console.log("Results : " + JSON.stringify(results));
+        items.find({'restaurant.name' : selectedRestaurantId}, {projection : {name : 1, description : 1, price : 1, section : 1}}).toArray().then((itemList) => {
+
+            console.log("Items ==> " + JSON.stringify(itemList));
+            
+            if(itemList){
                 res.json({
                     "status" : 200,
-                    "payload" : results
+                    "payload" : itemList
+                });
+            } else {
+                res.json({
+                    "status" : 404,
+                    "payload" : []
                 });
             }
+
+        }).catch((err) => {
+            res.json({
+                "status" : 404,
+                "payload" : []
+            });
         });
     } else {
         res.json({
@@ -185,27 +219,32 @@ router.get('/getRestaurantItems', (req,res) => {
     }
 });
 
-router.get('/getFilteredRestaurants', (req,res) => {
+router.get('/getFilteredRestaurants', buyerAuth, (req,res) => {
 
-    if (req.session.userType == BUYER){
-        let itemName = req.session.userDish;
+    if (req.userType == BUYER){
+        let dishPref = req.user.dishPref;
 
-        let query = "SELECT restaurant_id, restaurant_name, address, city, phone_number FROM grubhub.Restaurants where restaurant_id in (select parent_restaurant_id from grubhub.Menu_Items where upper(item_name)=upper('" + itemName + "'))";
+        const items = mongodb.collection('items');
 
-        pool.query(query, function(err, results){
-            if (err){
-                console.error("Error : " + JSON.stringify(err));
-                res.json({
-                    "status" : 500,
-                    "payload" : ""
-                });
-            } else {
-                console.log("Results : " + JSON.stringify(results));
+        items.find({name : dishPref}, {projection : {restaurant : 1}}).toArray().then((itemList) => {
+            
+            if(itemList){
                 res.json({
                     "status" : 200,
-                    "payload" : results
+                    "payload" : itemList
+                });
+            } else {
+                res.json({
+                    "status" : 404,
+                    "payload" : []
                 });
             }
+
+        }).catch((err) => {
+            res.json({
+                "status" : 404,
+                "payload" : []
+            });
         });
     } else {
         res.json({

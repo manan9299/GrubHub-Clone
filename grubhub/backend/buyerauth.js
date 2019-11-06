@@ -6,7 +6,7 @@ mongoDatabase.getMongoConnection().then((connection) => {
     mongodb = connection;
 });
 
-const ownerAuth = async(req, res, next) => {
+const buyerAuth = async(req, res, next) => {
     
     const token = req.header('Authorization').replace('Bearer ', '')
     const data = jwt.verify(token, constants.JWT_KEY)
@@ -25,4 +25,4 @@ const ownerAuth = async(req, res, next) => {
     });
 }
 
-module.exports = ownerAuth;
+module.exports = buyerAuth;

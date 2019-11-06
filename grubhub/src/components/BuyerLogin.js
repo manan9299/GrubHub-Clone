@@ -31,8 +31,6 @@ class BuyerLogin extends Component {
 			email : this.state.email,
 			password : this.state.password
 		}
-		// // set withCredentials to true in order to send cookies with request
-		// axios.defaults.withCredentials = true;
 
 		axios.post('http://localhost:3001/login', reqData)
 			.then(response => {

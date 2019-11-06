@@ -20,7 +20,7 @@ class RestaurantMenu extends Component {
 
     componentDidMount(){
         
-        axios.defaults.withCredentials = true;
+        axios.defaults.headers.common['Authorization'] = localStorage.getItem('grubhubUserToken');
 
         axios.get("http://localhost:3001/getRestaurantItems")
             .then(response => {
@@ -50,7 +50,7 @@ class RestaurantMenu extends Component {
         })
         this.setItemPrice(itemName, itemQty);
 
-        console.log("State : " + JSON.stringify(this.state.itemsForCart));
+        console.log("State : " + JSON.stringify(this.state));
         console.log("Item Prices State : " + JSON.stringify(this.state.itemPrices));
     }
 
@@ -59,7 +59,7 @@ class RestaurantMenu extends Component {
         
         for (let item in restaurantMenu){
             
-            if(restaurantMenu[item]["item_name"] == itemName){
+            if(restaurantMenu[item]["name"] == itemName){
                 let newItemPrice = {};
                 let itemPrice = restaurantMenu[item]["price"];
                 itemPrice = itemPrice * itemQty;
@@ -81,16 +81,16 @@ class RestaurantMenu extends Component {
         let menuItems = restaurantMenuItems.map( (item) => {
             return (
                 <tr>
-                    <td>{item["item_name"]}</td>
+                    <td>{item["name"]}</td>
                     <td>{item["description"]}</td>
                     <td>{item["price"]}</td>
                     <td>
                     <DropdownButton title='Select Quantity' variant='danger'>
-                        <Dropdown.Item id={item["item_name"]} onClick={this.setItemQuantity} name="1">1</Dropdown.Item>
-                        <Dropdown.Item id={item["item_name"]} onClick={this.setItemQuantity} name='2'>2</Dropdown.Item>
-                        <Dropdown.Item id={item["item_name"]} onClick={this.setItemQuantity} name='3'>3</Dropdown.Item>
-                        <Dropdown.Item id={item["item_name"]} onClick={this.setItemQuantity} name='4'>4</Dropdown.Item>
-                        <Dropdown.Item id={item["item_name"]} onClick={this.setItemQuantity} name='5'>5</Dropdown.Item>
+                        <Dropdown.Item id={item["name"]} onClick={this.setItemQuantity} name="1">1</Dropdown.Item>
+                        <Dropdown.Item id={item["name"]} onClick={this.setItemQuantity} name='2'>2</Dropdown.Item>
+                        <Dropdown.Item id={item["name"]} onClick={this.setItemQuantity} name='3'>3</Dropdown.Item>
+                        <Dropdown.Item id={item["name"]} onClick={this.setItemQuantity} name='4'>4</Dropdown.Item>
+                        <Dropdown.Item id={item["name"]} onClick={this.setItemQuantity} name='5'>5</Dropdown.Item>
                     </DropdownButton>
                     </td>
                 </tr>
@@ -108,8 +108,8 @@ class RestaurantMenu extends Component {
         delete reqData["submitMessage"];
 
         console.log(JSON.stringify(reqData));
-        // set withCredentials to true in order to send cookies with request
-        axios.defaults.withCredentials = true;
+        
+        axios.defaults.headers.common['Authorization'] = localStorage.getItem('grubhubUserToken');
 
         axios.post('http://localhost:3001/addToCart', reqData)
             .then(response => {
@@ -136,9 +136,9 @@ class RestaurantMenu extends Component {
 	
 	render() {
         let redirectVar = null;
-		if(!cookie.load('grubhubusercookie')){
+		if(!localStorage.getItem('grubhubUserToken')){
 			redirectVar = <Redirect to= "/buyerlogin"/>
-        }
+		}
         let restaurantMenu = this.getRestaurantMenu();
         
         return(

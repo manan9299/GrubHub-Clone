@@ -14,7 +14,7 @@ var getMongoConnection = () => {
 
     if (mongodb === undefined){
         return MongoClient.connect(MONGO_URL, {
-            poolSize : 100,
+            poolSize : 500,
             useNewUrlParser : true,
             useUnifiedTopology : true
         });
