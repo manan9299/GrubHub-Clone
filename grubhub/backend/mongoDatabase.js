@@ -5,7 +5,6 @@ const MONGO_URL = constants.MONGO_URL;
 
 var mongodb;
 
-
 module.exports.getMongoConnection = async () => {
     var conn = await getMongoConnection();
     return conn.db();
@@ -23,4 +22,3 @@ var getMongoConnection = () => {
         return new Promise.resolve(mongodb);
     }
 }
-

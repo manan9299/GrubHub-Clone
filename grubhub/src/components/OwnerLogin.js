@@ -41,6 +41,8 @@ class OwnerLogin extends Component {
 				if (response.status == 200){
 					let status = response.data.status;
 					if (status == "200") {
+						let token = response.data.token;
+						localStorage.setItem('grubhubToken', token);
 						this.setState({
 							authFlag : true,
 							authMessage : "",

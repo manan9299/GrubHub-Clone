@@ -11,9 +11,9 @@ class OwnerHome extends Component {
   	
 	render() {
         let redirectVar = null;
-		if(!cookie.load('grubhubcookie')){
-			redirectVar = <Redirect to= "/buyerlogin"/>
-        }
+		if(!localStorage.getItem('grubhubToken')){
+			redirectVar = <Redirect to= "/ownerlogin"/>
+		}
 
         return(
             <div className="offset-sm-3 col-sm-8">

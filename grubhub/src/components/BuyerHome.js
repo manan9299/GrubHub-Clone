@@ -57,10 +57,10 @@ class BuyerHome extends Component {
 	}
 	
 	render() {
-        let redirectVar = null;
-		if(!cookie.load('grubhubusercookie')){
+		let redirectVar = null;
+		if(!localStorage.getItem('grubhubUserToken')){
 			redirectVar = <Redirect to= "/buyerlogin"/>
-        }
+		}
         
         return(
             <div className="offset-sm-4 col-sm-3">

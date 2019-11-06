@@ -31,15 +31,19 @@ class BuyerLogin extends Component {
 			email : this.state.email,
 			password : this.state.password
 		}
-		// set withCredentials to true in order to send cookies with request
-		axios.defaults.withCredentials = true;
+		// // set withCredentials to true in order to send cookies with request
+		// axios.defaults.withCredentials = true;
 
 		axios.post('http://localhost:3001/login', reqData)
 			.then(response => {
 				console.log("response is " + JSON.stringify(response));
 				if (response.status == 200){
-					let status = response.data.status;
+					// response = JSON.parse(JSON.stringify(response));
+					let status = response.data.status ;
+					
 					if (status == "200") {
+						let token = response.data.token;
+						localStorage.setItem('grubhubUserToken', token);
 						this.setState({
 							authFlag : true,
 							authMessage : "",
@@ -50,10 +54,15 @@ class BuyerLogin extends Component {
 							authFlag : false,
 							authMessage : "Invalid Credentials",
 						});
+					} else if (status == "404") {
+						this.setState({
+							authFlag : false,
+							authMessage : response.data.message,
+						});
 					} else {
 						this.setState({
 							authFlag : false,
-							authMessage : "Internal Server Error",
+							authMessage : response.data.message,
 						});
 					}
 				} else {

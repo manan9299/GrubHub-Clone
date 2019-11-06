@@ -9,11 +9,12 @@ class CommonNavbar extends Component {
     }
     //handle logout to destroy the cookie
     handleLogout = () => {
-        cookie.remove('grubhubcookie', { path: '/' })
+		localStorage.removeItem('grubhubToken');
+        // cookie.remove('grubhubcookie', { path: '/' })
 	}
 	
 	handleUserLogout = () => {
-		cookie.remove('grubhubusercookie', { path: '/' })
+		localStorage.removeItem('grubhubUserToken');
 	}
 
 	render() {
@@ -23,7 +24,7 @@ class CommonNavbar extends Component {
 			margin: '5px'
 		}
 
-		if (cookie.load("grubhubcookie")){
+		if (localStorage.getItem('grubhubToken')){
 			console.log("Active Session detected !!");
 			navBarButtons = (
 				// className="offset-sm-10"
@@ -39,7 +40,7 @@ class CommonNavbar extends Component {
 					</NavDropdown>
 				</Form>
 			);
-		} else if (cookie.load("grubhubusercookie")){
+		} else if (localStorage.getItem('grubhubUserToken')){
 			console.log("Active Session detected !!");
 			navBarButtons = (
 				// className="offset-sm-10"
