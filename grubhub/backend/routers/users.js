@@ -1,5 +1,4 @@
 const express = require('express');
-var pool = require('../database');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
@@ -24,7 +23,7 @@ router.post('/login', function(req, res) {
     buyers.findOne({email : email}).then(async function(buyer) {
         
         const passwordMatches = await bcrypt.compare(password, buyer.password);
-        console.log(passwordMatches);
+        
         if(!passwordMatches){
             res.json({
                 "status" : 401,
@@ -51,11 +50,7 @@ router.post('/signup', async function(req, res) {
     let {buyerName, email, password, contact} = req.body;
 
     password = bcrypt.hashSync(password, 8);
-    console.log("Hashed Password");
-    console.log(password);
     const collection = mongodb.collection('buyers');
-
-    // collection.drop();
     
     let buyer = {
         buyerName : buyerName,
@@ -82,8 +77,7 @@ router.post('/ownersignup', function(req, res) {
     let {ownerName, email, password, contact} = req.body;
 
     password = bcrypt.hashSync(password, 8);
-    console.log("Hashed Password");
-    console.log(password);
+    
     const collection = mongodb.collection('owners');
     
     let owner = {
@@ -105,31 +99,6 @@ router.post('/ownersignup', function(req, res) {
             "status" : 500
         });
     });
-
-    // console.log("Req Body : " + JSON.stringify(req.body))
-
-    // let query = "INSERT INTO `grubhub`.`Owners` (`owner_name`, `email`, `password`, `phone_number`) VALUES ('" + ownerName + "', '" + email + "', '" + password + "', '" + contact + "')"
-    // console.log(query);
-    // pool.query(query, function(err, results){
-        
-    //     console.log("Error : " + JSON.stringify(err));
-    //     console.log("Result : " + JSON.stringify(results));
-
-    //     if (err){
-    //         console.error("Error : " + JSON.stringify(err));
-    //         res.json({
-    //             "status" : 500
-    //         });
-    //     } else if (results){
-    //         res.json({
-    //             "status" : 200
-    //         });
-    //     } else {
-    //         res.json({
-    //             "status" : 403
-    //         });
-    //     }
-    // });      
 });
 
 router.post('/ownerlogin', function(req, res) {
@@ -140,7 +109,7 @@ router.post('/ownerlogin', function(req, res) {
     owners.findOne({email : email}).then(async function(owner) {
         
         const passwordMatches = await bcrypt.compare(password, owner.password);
-        console.log(passwordMatches);
+        
         if(!passwordMatches){
             res.json({
                 "status" : 401,
@@ -161,37 +130,6 @@ router.post('/ownerlogin', function(req, res) {
             "message" : "User does not exist"
         });
     });
-
-
-    // let query = "SELECT * FROM grubhub.Owners where email='" + email + "' AND password='"+ password +"'";
-    // console.log(query);
-    // pool.query(query, function(err, results){
-        
-    //     console.log("Error : " + JSON.stringify(err));
-    //     console.log("Result : " + JSON.stringify(results));
-
-    //     if (err){
-    //         console.error("Error : " + JSON.stringify(err));
-    //         res.json({
-    //             "status" : 500
-    //         });
-    //     }
-    //     if (results){
-    //         res.cookie("grubhubcookie", "user", {
-    //             maxAge : 900000,
-    //             httpOnly : false
-    //         });
-    //         req.session.userId = results[0]["owner_id"];
-    //         req.session.userType = OWNER;
-    //         res.json({
-    //             "status" : 200
-    //         });
-    //     } else {
-    //         res.json({
-    //             "status" : 403
-    //         });
-    //     }
-    // });      
 });
 
 module.exports = router;

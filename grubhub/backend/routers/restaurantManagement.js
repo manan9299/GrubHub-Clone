@@ -1,5 +1,6 @@
 const express = require('express')
 var pool = require('../database');
+const ownerAuth = require('../auth');
 
 const router = express.Router();
 
@@ -7,56 +8,35 @@ var constants = require('../lib/constants');
 
 const OWNER = constants.OWNER;
 
-router.get('/getRestaurantInfo', (req,res) => {
+var mongoDatabase = require('../mongoDatabase');
+var mongodb;
+mongoDatabase.getMongoConnection().then((connection) => {
+    mongodb = connection;
+});
 
-    if (req.session.userType == OWNER){
-        let ownerId = req.session.userId;
-        let query = "SELECT restaurant_id, restaurant_name, address, city, zip_code, phone_number FROM grubhub.Restaurants where restaurant_owner_id='" + ownerId + "'";
-        console.log("Query : " + query);
-        pool.query(query, (err, results) => {
+router.get('/getRestaurantInfo', ownerAuth, (req,res) => {
 
-            console.log("Error : " + JSON.stringify(err));
-            console.log("Result : " + JSON.stringify(results));
+    if (req.userType == OWNER){
 
-            if (err){
-                console.error("Error : " + JSON.stringify(err));
-                res.json({
-                    "status" : 500,
-                    "payload" : ""
-                });
+        const restaurants = mongodb.collection('restaurants');
+        console.log("user is => " + JSON.stringify(req.user));
+
+        restaurants.findOne({ownerEmail : req.user.email}).then((restaurant) => {
+            console.log("Restaurant found ===> " + JSON.stringify(restaurant));
+            let payload = "";
+            if(restaurant){
+                payload = restaurant;
             }
+            res.json({
+                "status" : 200,
+                "payload" : payload
+            });
 
-            if (results){
-                let payload = {
-                    restaurantId : "",
-                    name : "",
-                    address : "",
-                    city : "",
-                    zip : "",
-                    contact : ""
-                };
-
-                if (results.length != 0){
-                    let {restaurant_id, restaurant_name, address, city, zip_code, phone_number} = results[0];
-                    payload = {
-                        restaurantId : restaurant_id,
-                        name : restaurant_name,
-                        address : address,
-                        city : city,
-                        zip : zip_code,
-                        contact : phone_number
-                    };
-                    res.json({
-                        "status" : 200,
-                        "payload" : payload
-                    });
-                } else {
-                    res.json({
-                        "status" : 404,
-                        "payload" : ""
-                    });
-                }
-            }
+        }).catch((err) => {
+            res.json({
+                "status" : 404,
+                "payload" : ""
+            });
         });
     } else {
         res.json({
@@ -121,40 +101,31 @@ router.get('/getsections', (req,res) => {
     }
 });
 
-router.post('/updateRestaurant', (req,res) => {
-    let {restaurantId, name, address, city, zip, contact, infoNotFound} = req.body;
+router.post('/updateRestaurant', ownerAuth, (req,res) => {
+    let {name, address, city, zip, contact} = req.body;
     
-    // UPDATE `grubhub`.`Restaurants` SET `restaurant_name` = 'Rest111', `address` = '1332, Address1', `city` = 'San Jose11' WHERE (`restaurant_id` = '1');
-    
-    if (req.session.userType == OWNER){
-        let ownerId = req.session.userId;
-        let query = "";
-        console.log("INFO NOT FOUND : " + infoNotFound);
-        if (infoNotFound){
-            query = "INSERT INTO `grubhub`.`Restaurants` (`restaurant_owner_id`, `restaurant_name`, `address`, `city`, `zip_code`, `phone_number`) VALUES ('"+ ownerId + "', '"+ name + "', '"+ address + "', '"+ city + "', '"+ zip + "', '"+ contact + "')";
-        } else {
-            query = "UPDATE `grubhub`.`Restaurants` SET `restaurant_name` = '"+ name + "', `address` = '"+ address + "', `city` = '"+ city + "', `zip_code` = '"+ zip + "', `phone_number` = '"+ contact + "' WHERE (`restaurant_id` = '"+ restaurantId + "')";
-        }
-        
+    let restaurants = mongodb.collection('restaurants');
 
-        console.log("Query : " + query);
-        pool.query(query, (err, results) => {
+    if (req.userType == OWNER){
+        let ownerEmail = req.user.email;
+        let restaurantPayload = {
+            name : name,
+            address : address,
+            city : city,
+            zip : zip,
+            contact : contact,
+            ownerEmail : ownerEmail
+        };
 
-            console.log("Error : " + JSON.stringify(err));
-            console.log("Result : " + JSON.stringify(results));
-
-            if (err){
-                console.error("Error : " + JSON.stringify(err));
-                res.json({
-                    "status" : 500
-                });
-            }
-
-            if (results){
-                res.json({
-                    "status" : 200
-                });
-            }
+        restaurants.updateOne({ownerEmail:ownerEmail}, { $set : restaurantPayload }, {upsert : true}).then((result) => {
+            res.json({
+                "status" : 200
+            });
+        }).catch((err) => {
+            console.log(err.toString());
+            res.json({
+                "status" : 500
+            });
         });
     } else {
         res.json({
@@ -163,51 +134,33 @@ router.post('/updateRestaurant', (req,res) => {
     }
 });
 
-router.post('/addsection', (req,res) => {
+router.post('/addsection', ownerAuth, (req,res) => {
 
-    console.log("REQUEST====" + JSON.stringify(req.body));
-    console.log("REQUEST====" + req.session.userType);
-    
-    if (req.session.userType == OWNER){
-        let ownerId = req.session.userId;
-        let sectionName = req.body.sectionName;
+    if (req.userType == OWNER){
+        let {sectionName} = req.body;
+        let ownerEmail = req.user.email;
 
-        let query = "SELECT restaurant_id FROM grubhub.Restaurants where restaurant_owner_id='"+ ownerId + "'";
-        let restaurant_id = "";
+        let restaurants = mongodb.collection('restaurants');
+        
+        restaurants.findOne({ownerEmail : ownerEmail}).then((restaurant) => {
+            let sections = restaurant.sections || [] ;
+            sections.push(sectionName);
 
-        console.log("Query 1 : " + query);
+            restaurants.updateOne({ownerEmail : ownerEmail}, { $set : {sections : sections} }, {upsert : true}).then((result) => {
+                res.json({
+                    "status" : 200
+                });
+            }).catch((err) => {
+                console.log(err.toString());
+                res.json({
+                    "status" : 500
+                });
+            });
 
-        pool.query(query, (err, results) => {
-            console.log("Error : " + JSON.stringify(err));
-            console.log("Result : " + JSON.stringify(results));
-            
-            if (results){
-                if (results.length != 0){
-                    restaurant_id = results[0]["restaurant_id"];
-                    console.log("restaurant_id : " + restaurant_id);
-                }
-            }
-
-            query = "INSERT INTO `grubhub`.`Menu_Sections` (`parent_restaurant_id`, `section_name`) VALUES ('" + restaurant_id + "', '" + sectionName + "')"
-
-            console.log("Query : " + query);
-            pool.query(query, (err, results) => {
-
-                console.log("Error : " + JSON.stringify(err));
-                console.log("Result : " + JSON.stringify(results));
-
-                if (err){
-                    console.error("Error : " + JSON.stringify(err));
-                    res.json({
-                        "status" : 500
-                    });
-                }
-
-                if (results){
-                    res.json({
-                        "status" : 200
-                    });
-                }
+        }).catch((err) => {
+            console.log(err.toString());
+            res.json({
+                "status" : 500
             });
         });
     } else {

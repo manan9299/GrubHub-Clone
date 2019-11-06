@@ -23,7 +23,7 @@ class RestaurantInfo extends Component {
     }
 
     componentDidMount(){
-        axios.defaults.withCredentials = true;
+        axios.defaults.headers.common['Authorization'] = localStorage.getItem('grubhubToken');
 
         axios.get("http://localhost:3001/getRestaurantInfo")
             .then(response => {
@@ -49,16 +49,14 @@ class RestaurantInfo extends Component {
     }
 
     submitUpdate = () => {
-        let {restaurantId, name, address, city, zip, contact, infoNotFound} = this.state;
+        let {name, address, city, zip, contact} = this.state;
         
         let reqData = {
-            restaurantId : restaurantId,
             name : name,
             address : address,
             city : city,
             zip : zip,
-            contact : contact,
-            infoNotFound : infoNotFound
+            contact : contact
         }
 
         axios.post("http://localhost:3001/updateRestaurant", reqData)
@@ -175,10 +173,9 @@ class RestaurantInfo extends Component {
   	
 	render() {
         let redirectVar = null;
-        // Uncomment this
-		if(!cookie.load('grubhubcookie')){
-			redirectVar = <Redirect to= "/buyerlogin"/>
-        }
+		if(!localStorage.getItem('grubhubToken')){
+			redirectVar = <Redirect to= "/ownerlogin"/>
+		}
 
         let tableData = this.getTableContents();
 

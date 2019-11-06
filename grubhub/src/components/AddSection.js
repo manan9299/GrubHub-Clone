@@ -26,7 +26,9 @@ class AddSection extends Component {
             }
             console.log(JSON.stringify(reqData));
             // set withCredentials to true in order to send cookies with request
-            axios.defaults.withCredentials = true;
+            // axios.defaults.withCredentials = true;
+
+            axios.defaults.headers.common['Authorization'] = localStorage.getItem('grubhubToken');
     
             axios.post('http://localhost:3001/addsection', reqData)
                 .then(response => {
@@ -74,10 +76,9 @@ class AddSection extends Component {
   	
 	render() {
         let redirectVar = null;
-
-		if(!cookie.load('grubhubcookie')){
-			redirectVar = <Redirect to= "/buyerlogin"/>
-        }
+		if(!localStorage.getItem('grubhubToken')){
+			redirectVar = <Redirect to= "/ownerlogin"/>
+		}
 
         let errMessage = this.state.isSectionNameValid ? "" : "Section Name should not be empty";
 

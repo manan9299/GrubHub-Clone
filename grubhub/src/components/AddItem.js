@@ -111,10 +111,9 @@ class AddItem extends Component {
   	
 	render() {
         let redirectVar = null;
-
-		if(!cookie.load('grubhubcookie')){
+		if(!localStorage.getItem('grubhubToken')){
 			redirectVar = <Redirect to= "/ownerlogin"/>
-        }
+		}
 
         return(
             <div className="offset-sm-4 col-sm-3">
