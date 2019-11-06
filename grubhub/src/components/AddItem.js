@@ -23,7 +23,7 @@ class AddItem extends Component {
     }
 
     componentDidMount(){
-        axios.defaults.withCredentials = true;
+        axios.defaults.headers.common['Authorization'] = localStorage.getItem('grubhubToken');
 
         axios.get("http://localhost:3001/getsections")
             .then(response => {
@@ -48,8 +48,8 @@ class AddItem extends Component {
         delete reqData["submitMessage"];
 
         console.log(JSON.stringify(reqData));
-        // set withCredentials to true in order to send cookies with request
-        axios.defaults.withCredentials = true;
+        
+        axios.defaults.headers.common['Authorization'] = localStorage.getItem('grubhubToken');
 
         axios.post('http://localhost:3001/additem', reqData)
             .then(response => {

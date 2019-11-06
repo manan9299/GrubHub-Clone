@@ -6,7 +6,7 @@ class SectionDropdown extends Component{
     getDropdownItems = () => {
         let items = this.props.items;
         items = items.map((item) => {
-            let sectionName = item["section_name"];
+            let sectionName = item;
             return (
                 <Dropdown.Item key={sectionName} onClick={e => this.props.onClick(e.target.name)} name={sectionName} >{sectionName}</Dropdown.Item>
             );

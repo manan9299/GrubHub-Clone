@@ -25,8 +25,6 @@ class AddSection extends Component {
                 sectionName : this.state.sectionName
             }
             console.log(JSON.stringify(reqData));
-            // set withCredentials to true in order to send cookies with request
-            // axios.defaults.withCredentials = true;
 
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('grubhubToken');
     
