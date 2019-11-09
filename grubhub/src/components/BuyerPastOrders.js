@@ -18,7 +18,7 @@ class BuyerPastOrders extends Component {
     componentDidMount(){
 
         axios.defaults.headers.common['Authorization'] = localStorage.getItem('grubhubUserToken');
-        axios.get("http://localhost:3001/getPastOrders")
+        axios.get("http://3.88.210.120:3001/getPastOrders")
             .then(response => {
                 console.log("Items Response is : " + JSON.stringify(response, null, 4));
                 let {status, payload} = response.data;

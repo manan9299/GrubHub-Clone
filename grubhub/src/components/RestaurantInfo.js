@@ -25,7 +25,7 @@ class RestaurantInfo extends Component {
     componentDidMount(){
         axios.defaults.headers.common['Authorization'] = localStorage.getItem('grubhubToken');
 
-        axios.get("http://localhost:3001/getRestaurantInfo")
+        axios.get("http://3.88.210.120:3001/getRestaurantInfo")
             .then(response => {
                 console.log("Response is : " + JSON.stringify(response, null, 4));
                 let {status, payload} = response.data;
@@ -59,7 +59,7 @@ class RestaurantInfo extends Component {
             contact : contact
         }
 
-        axios.post("http://localhost:3001/updateRestaurant", reqData)
+        axios.post("http://3.88.210.120:3001/updateRestaurant", reqData)
             .then( response => {
                 console.log("Response is : " + JSON.stringify(response));
 

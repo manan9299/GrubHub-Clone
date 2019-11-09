@@ -28,7 +28,7 @@ class AddSection extends Component {
 
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('grubhubToken');
     
-            axios.post('http://localhost:3001/addsection', reqData)
+            axios.post('http://3.88.210.120:3001/addsection', reqData)
                 .then(response => {
                     console.log("response is " + JSON.stringify(response));
                     if (response.status == 200){

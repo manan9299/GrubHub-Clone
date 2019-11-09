@@ -33,9 +33,9 @@ class OwnerLogin extends Component {
 			password : this.state.password
 		}
 		// set withCredentials to true in order to send cookies with request
-		axios.defaults.withCredentials = true;
+		// axios.defaults.withCredentials = true;
 
-		axios.post('http://localhost:3001/ownerlogin', reqData)
+		axios.post('http://3.88.210.120:3001/ownerlogin', reqData)
 			.then(response => {
 				console.log("response is " + JSON.stringify(response));
 				if (response.status == 200){

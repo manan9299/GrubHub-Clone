@@ -27,7 +27,7 @@ class BuyerHome extends Component {
 
 		axios.defaults.headers.common['Authorization'] = localStorage.getItem('grubhubUserToken');
 
-		axios.post("http://localhost:3001/setUserPref", reqData)
+		axios.post("http://3.88.210.120:3001/setUserPref", reqData)
 			.then( response => {
 
                 if(response.status == 200){

@@ -19,7 +19,7 @@ class UpcomingOrders extends Component {
     componentDidMount(){
 
         axios.defaults.headers.common['Authorization'] = localStorage.getItem('grubhubUserToken');
-        axios.get("http://localhost:3001/getBuyerOrders")
+        axios.get("http://3.88.210.120:3001/getBuyerOrders")
             .then(response => {
                 console.log("Items Response is : " + JSON.stringify(response, null, 4));
                 let {status, payload} = response.data;
@@ -55,7 +55,7 @@ class UpcomingOrders extends Component {
         }
         axios.defaults.headers.common['Authorization'] = localStorage.getItem('grubhubUserToken');
 
-        axios.post("http://localhost:3001/cancelOrder", reqData)
+        axios.post("http://3.88.210.120:3001/cancelOrder", reqData)
             .then(response => {
                 let status = response.data.status;
                 if (status == 200){

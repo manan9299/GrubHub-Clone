@@ -22,7 +22,7 @@ class ViewCart extends Component {
         
         axios.defaults.headers.common['Authorization'] = localStorage.getItem('grubhubUserToken');
 
-        axios.get("http://localhost:3001/getCartItems")
+        axios.get("http://3.88.210.120:3001/getCartItems")
             .then(response => {
                 console.log("Items Response is : " + JSON.stringify(response, null, 4));
                 let {status, payload} = response.data;
@@ -68,7 +68,7 @@ class ViewCart extends Component {
 
         axios.defaults.headers.common['Authorization'] = localStorage.getItem('grubhubUserToken');
 
-        axios.post('http://localhost:3001/placeOrder')
+        axios.post('http://3.88.210.120:3001/placeOrder')
             .then(response => {
                 console.log("response is " + JSON.stringify(response));
                 if (response.status == 200){

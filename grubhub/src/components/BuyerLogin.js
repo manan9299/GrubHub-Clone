@@ -32,7 +32,7 @@ class BuyerLogin extends Component {
 			password : this.state.password
 		}
 
-		axios.post('http://localhost:3001/login', reqData)
+		axios.post('http://3.88.210.120:3001/login', reqData)
 			.then(response => {
 				console.log("response is " + JSON.stringify(response));
 				if (response.status == 200){
