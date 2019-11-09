@@ -25,7 +25,7 @@ class OwnerHome extends Component {
                             <Card.Text>
                             You can view newly placed orders and manage their status here.
                             </Card.Text>
-                            <Button variant="danger" block>Manage</Button>
+                            <Button variant="danger" href="/manageOrders" block>Manage</Button>
                         </Card.Body>
                     </Card>
                     <Card style={{ width: '18rem', margin: '2rem'}} >
@@ -34,7 +34,7 @@ class OwnerHome extends Component {
                             <Card.Text>
                             Click here to view history of orders placed at your restaurant.
                             </Card.Text>
-                            <Button variant="light" block>Past Orders</Button>
+                            <Button variant="light" href="/ownerPastOrders" block>Past Orders</Button>
                         </Card.Body>
                     </Card>
 

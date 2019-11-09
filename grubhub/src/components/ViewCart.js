@@ -13,29 +13,34 @@ class ViewCart extends Component {
         this.state = {
             cartItems : [],
             totalPrice : "0",
-            submitMessage : ""
+            submitMessage : "",
+            restaurant : ""
         }
     }
 
     componentDidMount(){
         
-        axios.defaults.withCredentials = true;
+        axios.defaults.headers.common['Authorization'] = localStorage.getItem('grubhubUserToken');
 
-        axios.get("http://3.95.188.106:3001/getCartItems")
+        axios.get("http://localhost:3001/getCartItems")
             .then(response => {
                 console.log("Items Response is : " + JSON.stringify(response, null, 4));
                 let {status, payload} = response.data;
                 
                 if (status == 200){
+                    let restaurant = payload.restaurant;
+                    payload = payload.items;
+                    console.log("Payload => " + JSON.stringify(payload));
                     let totalPrice = "0";
                     for (let item in payload){
-                        let itemPrice = payload[item]["price"];
+                        let itemPrice = payload[item]["itemPrice"];
                         totalPrice = eval(totalPrice + "+" + itemPrice);
                     }
 
                     this.setState({
                         cartItems : payload,
-                        totalPrice : totalPrice
+                        totalPrice : totalPrice,
+                        restaurant : restaurant
                     });
                 }
             });
@@ -47,10 +52,10 @@ class ViewCart extends Component {
         let items = cartItems.map( (item) => {
             return (
                 <tr>
-                    <td>{item["item_name"]}</td>
-                    <td>{item["quantity"]}</td>
-                    <td>${item["price"]}</td>
-                    <td>{item["restaurant_name"]}</td>
+                    <td>{item["itemName"]}</td>
+                    <td>{item["itemQty"]}</td>
+                    <td>${item["itemPrice"]}</td>
+                    <td>{this.state.restaurant}</td>
                 </tr>
             );
 
@@ -61,9 +66,9 @@ class ViewCart extends Component {
     placeOrder = (event) => {
         event.preventDefault();
 
-        axios.defaults.withCredentials = true;
+        axios.defaults.headers.common['Authorization'] = localStorage.getItem('grubhubUserToken');
 
-        axios.post('http://3.95.188.106:3001/placeOrder')
+        axios.post('http://localhost:3001/placeOrder')
             .then(response => {
                 console.log("response is " + JSON.stringify(response));
                 if (response.status == 200){
@@ -85,15 +90,14 @@ class ViewCart extends Component {
                     })
                 }
             })
-
     }
-    
 	
 	render() {
         let redirectVar = null;
-		if(!cookie.load('grubhubusercookie')){
+		if(!localStorage.getItem('grubhubUserToken')){
 			redirectVar = <Redirect to= "/buyerlogin"/>
         }
+        
         let cartItems = this.getCartItems();
         
         return(

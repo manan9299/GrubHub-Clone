@@ -16,6 +16,7 @@ class BuyerSignUp extends Component {
 			password : "",
 			buyerName : "",
 			contact : "",
+			address : "",
 			authFlag : false,
 			authMessage : "",
 			isEmailValid : false,
@@ -34,13 +35,14 @@ class BuyerSignUp extends Component {
 			email : this.state.email,
 			password : this.state.password,
 			buyerName : this.state.buyerName,
-			contact : this.state.contact
+			contact : this.state.contact,
+			address : this.state.address
 		}
 		console.log(JSON.stringify(reqData));
 		// set withCredentials to true in order to send cookies with request
 		axios.defaults.withCredentials = true;
 
-		axios.post('http://3.95.188.106:3001/signup', reqData)
+		axios.post('http://localhost:3001/signup', reqData)
 			.then(response => {
 				console.log("response is " + JSON.stringify(response));
 				if (response.status == 200){
@@ -73,6 +75,11 @@ class BuyerSignUp extends Component {
 	nameChangeHandler = (event) => {
 		this.setState({
 			buyerName : event.target.value
+		});
+	}
+	addressChangeHandler = (event) => {
+		this.setState({
+			address : event.target.value
 		});
 	}
 
@@ -142,10 +149,13 @@ class BuyerSignUp extends Component {
 						<Form.Control onChange={this.passwordChangeHandler} type="password" />
 						{passwordErrorMessage}
 					</Form.Group>
+					<Form.Group >
+						<Form.Label>Address</Form.Label>
+						<Form.Control onChange={this.addressChangeHandler} className='form-group' type="text" />
+					</Form.Group>
 					<Form.Group>
 						<Form.Label>Contact</Form.Label>
 						<Form.Control onChange={this.contactChangeHandler} type="text" />
-						
 					</Form.Group>
 					<Form.Group>
 						<Button onClick={this.submitSignUp} variant="primary" type="submit" block>

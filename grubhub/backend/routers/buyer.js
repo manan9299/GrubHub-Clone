@@ -66,48 +66,43 @@ router.post('/setSelectedRestaurant', buyerAuth, (req,res) => {
 router.post('/addToCart', buyerAuth, (req,res) => {
 
     if (req.userType == BUYER){
+        let buyerEmail = req.user.email;
 
-
-        let buyerId = req.session.userId;
-        let restaurantId = req.session.selectedRestaurantId;
+        const cart = mongodb.collection('cart');
 
         let items = req.body.itemsForCart;
         let itemPrices = req.body.itemPrices;
-        let itemQueryStringList = [];
+        let restaurant = req.user.restaurantPref;
+        let itemList = [];
 
         for(let item in items){
             let itemName = item;
             let itemQty = items[item];
             let itemPrice = itemPrices[item];
 
-            let itemString = "('" + buyerId + "', '" + itemName + "', '" + itemQty + "', '" + restaurantId + "', '" + itemPrice + "')";
-            itemQueryStringList.push(itemString);
+            let newItem = {
+                itemName : itemName,
+                itemQty : itemQty,
+                itemPrice : itemPrice
+            }
+            itemList.push(newItem);
         }
 
-        let itemQueryString = itemQueryStringList.join(",");
-        console.log("itemQueryString : " + itemQueryString);
-
-        let query = "INSERT INTO `grubhub`.`Cart` (`buyer_id`, `item_name`, `quantity`, `restaurant_id`, `price`) VALUES " + itemQueryString ;
-        console.log("Insert Query : " + query);
-        pool.query(query, function(err, results){
-            
-            console.log("Error : " + JSON.stringify(err));
-            console.log("Result : " + JSON.stringify(results));
-
-            if (err){
-                console.error("Error : " + JSON.stringify(err));
-                res.json({
-                    "status" : 500
-                });
-            } else if (results && results.length != 0){
-                res.json({
-                    "status" : 200
-                });
-            } else {
-                res.json({
-                    "status" : 403
-                });
-            }
+        let cartItem = {
+            buyerEmail : buyerEmail,
+            restaurant : restaurant,
+            items : itemList
+        }
+        console.log(JSON.stringify(cartItem));
+        cart.insertOne(cartItem).then((results) => {
+            res.json({
+                "status" : 200
+            });
+        }).catch((err) => {
+            console.error("Error : " + JSON.stringify(err));
+            res.json({
+                "status" : 500
+            });
         });
         
     } else {
@@ -117,33 +112,45 @@ router.post('/addToCart', buyerAuth, (req,res) => {
     }
 });
 
-router.post('/placeOrder', (req,res) => {
+router.post('/placeOrder', buyerAuth, (req,res) => {
 
-    if (req.session.userType == BUYER){
-        let buyerId = req.session.userId;
-        
-        let query = "INSERT INTO `grubhub`.`Orders` (`item_name`, `ordered_restaurant_id`, `quantity`, `price`, `buyer_id`) SELECT item_name, restaurant_id, quantity, price, buyer_id FROM grubhub.Cart where grubhub.Cart.buyer_id = " + buyerId;
-        pool.query(query, function(err, results){
-            
-            console.log("Error : " + JSON.stringify(err));
-            console.log("Result : " + JSON.stringify(results));
+    if (req.userType == BUYER){
+        let buyerEmail = req.user.email;
 
-            if (err){
-                console.error("Error : " + JSON.stringify(err));
-                res.json({
-                    "status" : 500
-                });
-            } else if (results && results.length != 0){
-                res.json({
-                    "status" : 200
-                });
-            } else {
-                res.json({
-                    "status" : 403
-                });
+        const cart = mongodb.collection('cart');
+
+        cart.findOne({buyerEmail : buyerEmail}).then((results) => {
+            let order = {
+                status : "New",
+                buyerEmail : buyerEmail,
+                restaurant : results.restaurant,
+                items : results.items,
+                deliveryAddress : req.user.address
             }
+
+            const orders = mongodb.collection('orders');
+
+            orders.insertOne(order).then((result) => {
+                cart.deleteMany({buyerEmail : buyerEmail}).then((result) => {
+                    res.json({
+                        "status" : 200
+                    });
+                }).catch((err) => {
+                    res.json({
+                        "status" : 404
+                    });
+                });
+                
+            }).catch((err) => {
+                res.json({
+                    "status" : 404
+                });
+            });
+        }).catch((err) => {
+            res.json({
+                "status" : 404
+            });
         });
-        
     } else {
         res.json({
             "status" : 403
@@ -151,28 +158,34 @@ router.post('/placeOrder', (req,res) => {
     }
 });
 
-router.get('/getCartItems', (req,res) => {
+router.get('/getCartItems', buyerAuth, (req,res) => {
 
-    if (req.session.userType == BUYER){
+    if (req.userType == BUYER){
+        let buyerEmail = req.user.email;
 
-        let buyerId = req.session.userId;
+        const cart = mongodb.collection('cart');
 
-        let query = "SELECT item_name, quantity, price, restaurant_name FROM  grubhub.Cart inner join grubhub.Restaurants on grubhub.Cart.restaurant_id = grubhub.Restaurants.restaurant_id where grubhub.Cart.buyer_id = " + buyerId;
-
-        pool.query(query, function(err, results){
-            if (err){
-                console.error("Error : " + JSON.stringify(err));
-                res.json({
-                    "status" : 500,
-                    "payload" : ""
-                });
-            } else {
-                console.log("Results : " + JSON.stringify(results));
+        cart.findOne({buyerEmail : buyerEmail}, {projection : {restaurant : 1, items : 1}}).then((itemList) => {
+            console.log("Found Item");
+            console.log("Items ==> " + JSON.stringify(itemList));
+            
+            if(itemList){
                 res.json({
                     "status" : 200,
-                    "payload" : results
+                    "payload" : itemList
+                });
+            } else {
+                res.json({
+                    "status" : 404,
+                    "payload" : []
                 });
             }
+
+        }).catch((err) => {
+            res.json({
+                "status" : 404,
+                "payload" : []
+            });
         });
     } else {
         res.json({

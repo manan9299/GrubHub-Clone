@@ -47,7 +47,7 @@ router.post('/login', function(req, res) {
 });
 
 router.post('/signup', async function(req, res) {
-    let {buyerName, email, password, contact} = req.body;
+    let {buyerName, email, password, contact, address} = req.body;
 
     password = bcrypt.hashSync(password, 8);
     const collection = mongodb.collection('buyers');
@@ -56,7 +56,8 @@ router.post('/signup', async function(req, res) {
         buyerName : buyerName,
         email : email,
         password : password,
-        contact : contact
+        contact : contact,
+        address : address
     }
     
     collection.insertOne(buyer).then((results) => {

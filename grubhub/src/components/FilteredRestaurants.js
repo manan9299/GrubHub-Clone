@@ -20,7 +20,7 @@ class FilteredRestaurants extends Component {
         
         axios.defaults.headers.common['Authorization'] = localStorage.getItem('grubhubUserToken');
 
-        axios.get("http://3.95.188.106:3001/getFilteredRestaurants")
+        axios.get("http://localhost:3001/getFilteredRestaurants")
             .then(response => {
                 console.log("Response is : " + JSON.stringify(response, null, 4));
                 let {status, payload} = response.data;
@@ -42,7 +42,7 @@ class FilteredRestaurants extends Component {
 
         axios.defaults.headers.common['Authorization'] = localStorage.getItem('grubhubUserToken');
 
-        axios.post("http://3.95.188.106:3001/setSelectedRestaurant", reqData)
+        axios.post("http://localhost:3001/setSelectedRestaurant", reqData)
             .then( response => {
                 console.log("Response is : " + JSON.stringify(response));
 

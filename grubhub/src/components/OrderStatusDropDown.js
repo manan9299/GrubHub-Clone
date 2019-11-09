@@ -1,14 +1,14 @@
 import React, {Component} from 'react';
 import { Form, Button, Dropdown, DropdownButton, FormControl, InputGroup } from 'react-bootstrap';
 
-class SectionDropdown extends Component{
+class OrderStatusDropDown extends Component{
     
     getDropdownItems = () => {
         let items = this.props.items;
         items = items.map((item) => {
             let sectionName = item;
             return (
-                <Dropdown.Item onClick={e => this.props.onClick(e.target.name)} name={sectionName} >{sectionName}</Dropdown.Item>
+                <Dropdown.Item id={this.props.id} onClick={e => this.props.onClick(e.target.name, e.target.id)} name={sectionName} >{sectionName}</Dropdown.Item>
             );
         } );
         return items;
@@ -28,4 +28,4 @@ class SectionDropdown extends Component{
     }
 }
 
-export default SectionDropdown;
+export default OrderStatusDropDown;

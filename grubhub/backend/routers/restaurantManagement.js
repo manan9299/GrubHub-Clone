@@ -100,9 +100,18 @@ router.post('/updateRestaurant', ownerAuth, (req,res) => {
         };
 
         restaurants.updateOne({ownerEmail:ownerEmail}, { $set : restaurantPayload }, {upsert : true}).then((result) => {
-            res.json({
-                "status" : 200
+            let owners = mongodb.collection('owners');
+
+            owners.updateOne({email:ownerEmail}, { $set : {restaurantOwned : name} }, {upsert : true}).then((results) => {
+                res.json({
+                    "status" : 200
+                });
+            }).catch((err) => {
+                res.json({
+                    "status" : 404
+                });
             });
+            
         }).catch((err) => {
             console.log(err.toString());
             res.json({

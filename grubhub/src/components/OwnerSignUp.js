@@ -40,7 +40,7 @@ class OwnerSignUp extends Component {
 		// set withCredentials to true in order to send cookies with request
 		axios.defaults.withCredentials = true;
 
-		axios.post('http://3.95.188.106:3001/ownersignup', reqData)
+		axios.post('http://localhost:3001/ownersignup', reqData)
 			.then(response => {
 				
 				if (response.status == 200){

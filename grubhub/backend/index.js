@@ -8,6 +8,7 @@ var cors = require('cors');
 var userRouter = require('./routers/users');
 var restaurantManagementRouter = require('./routers/restaurantManagement');
 var buyerRouter = require('./routers/buyer');
+var orderRouter  = require('./routers/orders');
 
 //use cors to allow cross origin resource sharing
 app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
@@ -36,6 +37,7 @@ app.use(function(req, res, next) {
 app.use(userRouter);
 app.use(restaurantManagementRouter);
 app.use(buyerRouter);
+app.use(orderRouter);
 
 app.listen(3001);
 console.log('Server Listening on port 3001');

@@ -25,7 +25,7 @@ class AddItem extends Component {
     componentDidMount(){
         axios.defaults.headers.common['Authorization'] = localStorage.getItem('grubhubToken');
 
-        axios.get("http://3.95.188.106:3001/getsections")
+        axios.get("http://localhost:3001/getsections")
             .then(response => {
                 console.log("Response is : " + JSON.stringify(response, null, 4));
                 let {status, payload, restaurant_id} = response.data;
@@ -51,7 +51,7 @@ class AddItem extends Component {
         
         axios.defaults.headers.common['Authorization'] = localStorage.getItem('grubhubToken');
 
-        axios.post('http://3.95.188.106:3001/additem', reqData)
+        axios.post('http://localhost:3001/additem', reqData)
             .then(response => {
                 console.log("response is " + JSON.stringify(response));
                 if (response.status == 200){
@@ -131,7 +131,7 @@ class AddItem extends Component {
 						<Form.Label>Description</Form.Label>
 						<Form.Control onChange={this.descriptionChangeHandler} className='form-group' type="text" />
 					</Form.Group>
-                    <SectionDropdown onClick={this.sectionChangeHandler} items={this.state.sectionItems} />
+                    <SectionDropdown label="Section" onClick={this.sectionChangeHandler} items={this.state.sectionItems} />
                     <Form.Group >
 						<Form.Label>Price</Form.Label>
 						<Form.Control onChange={this.priceChangeHandler} className='form-group' type="text" />

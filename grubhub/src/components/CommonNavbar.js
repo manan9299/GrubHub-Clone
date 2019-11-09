@@ -47,8 +47,8 @@ class CommonNavbar extends Component {
 				<Form className="offset-sm-8" inline>
 					<Button variant="link"  style={btnStyle} href='/buyerhome'>Home</Button>
 					<NavDropdown title="Manage Account" id="nav-dropdown">
-						<NavDropdown.Item href='/'>View Upcoming Orders</NavDropdown.Item>
-						<NavDropdown.Item href='/'>View Past Orders</NavDropdown.Item>
+						<NavDropdown.Item href='/upcomingOrders'>View Upcoming Orders</NavDropdown.Item>
+						<NavDropdown.Item href='/buyerPastOrders'>View Past Orders</NavDropdown.Item>
 						<NavDropdown.Item href='/viewcart'>Cart</NavDropdown.Item>
 						<NavDropdown.Divider />
 						<NavDropdown.Item >View Profile</NavDropdown.Item>

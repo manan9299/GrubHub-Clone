@@ -15,8 +15,12 @@ import AddItem from './AddItem';
 import FilteredRestaurants from './FilteredRestaurants';
 import RestaurantMenu from './RestaurantMenu';
 import ViewCart from './ViewCart';
+import ManageOrders from './ManageOrders';
 
 import '../css/App.css';
+import UpcomingOrders from './UpcomingOrders';
+import BuyerPastOrders from './BuyerPastOrders';
+import OwnerPastOrders from './OwnerPastOrders';
 
 class App extends Component {
 
@@ -40,6 +44,10 @@ class App extends Component {
           <Route path="/filteredrestaurants" component={FilteredRestaurants}/>
           <Route path="/showrestaurantmenu" component={RestaurantMenu}/>
           <Route path="/viewcart" component={ViewCart}/>
+          <Route path="/manageorders" component={ManageOrders}/>
+          <Route path="/upcomingOrders" component={UpcomingOrders}/>
+          <Route path="/buyerPastOrders" component={BuyerPastOrders}/>
+          <Route path="/ownerPastOrders" component={OwnerPastOrders}/>
         </div>
       </BrowserRouter>
     );
