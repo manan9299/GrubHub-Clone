@@ -6,15 +6,6 @@
 
 > Individual Project for Gradaute Software Engineering course Enterprise Distributed Systems.
 
-
-- This project is a clone of Food Delivery app GRUBHUB.
-- Users can order their food online as well as Restaurant Owners can manage their menus and pricing.
-- Built using React and Node.
-- Used MongoDB for storing user and restaurant data.
-- Redis for caching frequently accessed restaurant menus.
-- Apache Kafka as Message Queues.
-
-
 ## Goal
 
 * The goal is to build a distributed enterprise web application which allows the user to order their food online.
