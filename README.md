@@ -72,7 +72,9 @@ There are 2 actors in the system:
 </table>
 <br/>
 
-### Database
-> Used MongoDB to store entities with large amount of data and which doesn't need transactional support such as Restaurant details, menu items, etc. and MySQL to store critacl data such as user info, order details, etc.
+### Database Design trade-offs
+> Used MongoDB (NoSQL) to store large amounts of read heavy data which doesn't require transaction support such as Restaurant details, their menu items, etc.
+
+> Used MySQL to store data which requires transaction support such as user profile information, order details, etc.
 
 > Used database pl stored procedure for our booking and payment functionality so that we can provide transaction support and if anything goes wrong in between then we can roll back to a point where the database is in a consistent state.
