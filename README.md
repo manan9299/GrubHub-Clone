@@ -12,7 +12,7 @@
 There are 2 actors in the system:
 
 1. Restaurant Owner - Can add new restaurant, menu items, change status of orders.
-2. Customers - Can search of different restaurants, dishes, place their order and view order status.
+2. Customers - Can search for different restaurants, dishes, place their order and view order status.
 
 * We were tasked with this project requirement so that we can learn to build enterprise MERN stack applications using various distributed technologies such as Apache Kafka as message queues, Redis for caching, etc.
 
